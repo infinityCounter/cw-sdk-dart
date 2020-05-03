@@ -22,7 +22,9 @@ class RestApiClient {
   final String _apiDomain;
   final String _apiKey;
 
-  RestApiClient([this._apiDomain = defaultApiDomain, this._apiKey = ""]);
+  RestApiClient({String apiDomain: defaultApiDomain, String apiKey: ""})
+      : this._apiDomain = apiDomain,
+        this._apiKey = apiKey;
 
   Future<String> _doApiRequest(String path) {
     var endpoint = Uri.https(this._apiDomain, path);
