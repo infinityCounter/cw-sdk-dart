@@ -10,25 +10,36 @@ const defaultApiDomain = "api.cryptowat.ch";
 
 const unexpectedResponseFormat = "Unexpected format for response";
 
+const _apiKeyHeader = "X-CW-API-Key";
+
 var httpClient = http.Client();
 
-class RestApiV1Client {
+/// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
+///
+/// The methods implemented by this class all return a Future object instead of the actual
+/// result.
+class RestApiClient {
   final String _apiDomain;
   final String _apiKey;
 
-  RestApiV1Client([this._apiDomain = defaultApiDomain, this._apiKey = ""]);
+  RestApiClient([this._apiDomain = defaultApiDomain, this._apiKey = ""]);
 
-  Future<http.Response> _doApiRequest(String path) {
+  Future<String> _doApiRequest(String path) {
     var endpoint = Uri.https(this._apiDomain, path);
-    return httpClient.get(endpoint.toString());
+
+    if (this._apiKey is String && this._apiKey != "") {
+      return http.read(endpoint, headers: {_apiKeyHeader: this._apiKey});
+    }
+
+    return http.read(endpoint);
   }
 
   /// Returns a Future that resolves to a list of assets from the cryptowatch REST API.
   Future<List<common.Asset>> fetchAssets() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
-      return respFuture.then((resp) {
-        var unpacked = convert.jsonDecode(resp.body);
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
           throw unexpectedResponseFormat;
         }
@@ -55,8 +66,8 @@ class RestApiV1Client {
   Future<List<common.Pair>> fetchPairs() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
-      return respFuture.then((resp) {
-        var unpacked = convert.jsonDecode(resp.body);
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
           throw unexpectedResponseFormat;
         }

@@ -2,10 +2,10 @@ library cmd;
 
 import 'dart:io' as io;
 
-import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk show RestApiV1Client;
+import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk show RestApiClient;
 
 main() {
-  var apiClient = new sdk.RestApiV1Client();
+  var apiClient = new sdk.RestApiClient();
   var assetsFuture = apiClient.fetchAssets();
   assetsFuture.then((assets) {
     for (var a in assets) {

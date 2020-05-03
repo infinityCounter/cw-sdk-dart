@@ -1,5 +1,5 @@
 name: cw_sdk_dart
-description: An open source sdk built on top of Cryptowatch's v1 API.
+description: An open source sdk built on top of Cryptowatch's API.
 author: Emile Keith <emilekeith3.0@gmail.com>
 dependencies:
   http: ^0.12.1
