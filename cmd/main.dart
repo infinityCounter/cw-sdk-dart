@@ -13,6 +13,9 @@ main() {
   futures.add(apiClient.fetchExchanges());
   futures.add(apiClient.fetchMarkets());
   futures.add(apiClient.fetchAsset("btc"));
+  futures.add(apiClient.fetchPair("btcusd"));
+  futures.add(apiClient.fetchExchange("bitfinex"));
+  futures.add(apiClient.fetchMarket("bitfinex", "btcusd"));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -20,6 +23,9 @@ main() {
     var exchanges = results[2];
     var markets = results[3];
     var btc = results[4];
+    var btcusd = results[5];
+    var bitfinex = results[6];
+    var bitfinexBtcUsd = results[7];
 
     for (var a in assets) {
       print(a);
@@ -38,6 +44,10 @@ main() {
     }
 
     print(btc);
+    print(btcusd);
+    print(bitfinex);
+    print(bitfinexBtcUsd);
+
     io.exit(0);
   }, onError: (e) {
     print(e);

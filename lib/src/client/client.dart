@@ -64,6 +64,7 @@ class RestApiClient {
     return ret;
   }
 
+  /// Returns a Future that resolves to the asset on Cryptowatch REST API with the symbol [sym].
   Future<common.Asset> fetchAsset(String sym) {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets/${sym}");
@@ -113,6 +114,28 @@ class RestApiClient {
     return ret;
   }
 
+  /// Returns a Future that resolves to the pair on Cryptowatch REST API with the symbol [sym].
+  Future<common.Pair> fetchPair(String sym) {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("pairs/${sym}");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedPair = unpacked["result"];
+        if (unparsedPair is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parsePair(unparsedPair);
+      });
+    });
+
+    return ret;
+  }
+
   /// Returns a Future that resolves to a list of exchanges from the cryptowatch REST API.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
@@ -141,6 +164,28 @@ class RestApiClient {
     return ret;
   }
 
+  /// Returns a Future that resolves to the exchange on Cryptowatch REST API with the symbol [sym].
+  Future<common.Exchange> fetchExchange(String sym) {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("exchanges/${sym}");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedExchange = unpacked["result"];
+        if (unparsedExchange is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parseExchange(unparsedExchange);
+      });
+    });
+
+    return ret;
+  }
+
   /// Returns a Future that resolves to a list of markets from the cryptowatch REST API.
   Future<List<common.Market>> fetchMarkets() {
     var ret = Future(() {
@@ -163,6 +208,29 @@ class RestApiClient {
         }
 
         return marketList;
+      });
+    });
+
+    return ret;
+  }
+
+  /// Returns a Future that resolves to the market on Cryptowatch REST API for
+  /// the exchange [exchangeSym] and pair [pairSym].
+  Future<common.Market> fetchMarket(String exchangeSym, String pairSym) {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedMarket = unpacked["result"];
+        if (unparsedMarket is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parseMarket(unparsedMarket);
       });
     });
 
