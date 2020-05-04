@@ -17,7 +17,7 @@ var httpClient = http.Client();
 /// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
 ///
 /// The methods implemented by this class all return a Future object instead of the actual
-/// result.
+/// result. CW API docs available at: https://docs.cryptowat.ch/rest-api/
 class RestApiClient {
   final String _apiDomain;
   final String _apiKey;
@@ -58,6 +58,27 @@ class RestApiClient {
         }
 
         return assetList;
+      });
+    });
+
+    return ret;
+  }
+
+  Future<common.Asset> fetchAsset(String sym) {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("assets/${sym}");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedAsset = unpacked["result"];
+        if (unparsedAsset is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parseAsset(unparsedAsset);
       });
     });
 
@@ -149,7 +170,7 @@ class RestApiClient {
   }
 }
 
-_parseAsset(Map<String, dynamic> props) {
+common.Asset _parseAsset(Map<String, dynamic> props) {
   var id = props["id"];
   var name = props["name"];
   var symbol = props["symbol"];
@@ -158,7 +179,7 @@ _parseAsset(Map<String, dynamic> props) {
   return new common.Asset(id, name, symbol, fiat);
 }
 
-_parsePair(Map<String, dynamic> props) {
+common.Pair _parsePair(Map<String, dynamic> props) {
   var id = props["id"];
   var symbol = props["symbol"];
   var base = _parseAsset(props["base"]);
@@ -174,7 +195,7 @@ _parsePair(Map<String, dynamic> props) {
   );
 }
 
-_parseExchange(Map<String, dynamic> props) {
+common.Exchange _parseExchange(Map<String, dynamic> props) {
   var id = props["id"];
   var name = props["name"];
   var symbol = props["symbol"];
@@ -183,7 +204,7 @@ _parseExchange(Map<String, dynamic> props) {
   return new common.Exchange(id, name, symbol, active);
 }
 
-_parseMarket(Map<String, dynamic> props) {
+common.Market _parseMarket(Map<String, dynamic> props) {
   var id = props["id"];
   var exchange = props["exchange"];
   var pair = props["pair"];

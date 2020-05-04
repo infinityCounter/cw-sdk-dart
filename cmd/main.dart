@@ -6,33 +6,41 @@ import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk show RestApiClient;
 
 main() {
   var apiClient = new sdk.RestApiClient();
-  var assetsFuture = apiClient.fetchAssets();
-  assetsFuture.then((assets) {
+  var futures = new List<Future>();
+
+  futures.add(apiClient.fetchAssets());
+  futures.add(apiClient.fetchPairs());
+  futures.add(apiClient.fetchExchanges());
+  futures.add(apiClient.fetchMarkets());
+  futures.add(apiClient.fetchAsset("btc"));
+
+  Future.wait(futures).then((List<dynamic> results) {
+    var assets = results[0];
+    var pairs = results[1];
+    var exchanges = results[2];
+    var markets = results[3];
+    var btc = results[4];
+
     for (var a in assets) {
       print(a);
     }
-  }, onError: (e) => print(e));
 
-  var pairsFuture = apiClient.fetchPairs();
-  pairsFuture.then((pairs) {
     for (var p in pairs) {
       print(p);
     }
-  }, onError: (e) => print(e));
 
-  var exchangesFuture = apiClient.fetchExchanges();
-  exchangesFuture.then((exchanges) {
     for (var e in exchanges) {
       print(e);
     }
-  }, onError: (e) => print(e));
 
-  var marketsFuture = apiClient.fetchMarkets();
-  marketsFuture.then((markets) {
     for (var m in markets) {
       print(m);
     }
 
+    print(btc);
     io.exit(0);
-  }, onError: (e) => print(e));
+  }, onError: (e) {
+    print(e);
+    io.exit(1);
+  });
 }
