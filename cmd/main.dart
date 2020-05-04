@@ -18,6 +18,20 @@ main() {
     for (var p in pairs) {
       print(p);
     }
+  }, onError: (e) => print(e));
+
+  var exchangesFuture = apiClient.fetchExchanges();
+  exchangesFuture.then((exchanges) {
+    for (var e in exchanges) {
+      print(e);
+    }
+  }, onError: (e) => print(e));
+
+  var marketsFuture = apiClient.fetchMarkets();
+  marketsFuture.then((markets) {
+    for (var m in markets) {
+      print(m);
+    }
 
     io.exit(0);
   }, onError: (e) => print(e));

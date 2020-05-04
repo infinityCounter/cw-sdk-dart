@@ -2,9 +2,9 @@ library client;
 
 import 'dart:convert' as convert show jsonDecode;
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http show Client, read;
 
-import '../common/common.dart' as common show Asset, Pair;
+import '../common/common.dart' as common;
 
 const defaultApiDomain = "api.cryptowat.ch";
 
@@ -91,6 +91,62 @@ class RestApiClient {
 
     return ret;
   }
+
+  /// Returns a Future that resolves to a list of exchanges from the cryptowatch REST API.
+  Future<List<common.Exchange>> fetchExchanges() {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("exchanges");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedExchangeList = unpacked["result"];
+        if (unparsedExchangeList is! List) {
+          throw unexpectedResponseFormat;
+        }
+
+        var exchangeList = new List<common.Exchange>();
+
+        for (var unparsedExchange in unparsedExchangeList) {
+          exchangeList.add(_parseExchange(unparsedExchange));
+        }
+
+        return exchangeList;
+      });
+    });
+
+    return ret;
+  }
+
+  /// Returns a Future that resolves to a list of markets from the cryptowatch REST API.
+  Future<List<common.Market>> fetchMarkets() {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest("markets");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedMarketList = unpacked["result"];
+        if (unparsedMarketList is! List) {
+          throw unexpectedResponseFormat;
+        }
+
+        var marketList = new List<common.Market>();
+
+        for (var unparsedMarket in unparsedMarketList) {
+          marketList.add(_parseMarket(unparsedMarket));
+        }
+
+        return marketList;
+      });
+    });
+
+    return ret;
+  }
 }
 
 _parseAsset(Map<String, dynamic> props) {
@@ -116,4 +172,22 @@ _parsePair(Map<String, dynamic> props) {
     quote,
     futuresContractPeriod,
   );
+}
+
+_parseExchange(Map<String, dynamic> props) {
+  var id = props["id"];
+  var name = props["name"];
+  var symbol = props["symbol"];
+  var active = props["active"];
+
+  return new common.Exchange(id, name, symbol, active);
+}
+
+_parseMarket(Map<String, dynamic> props) {
+  var id = props["id"];
+  var exchange = props["exchange"];
+  var pair = props["pair"];
+  var active = props["active"];
+
+  return new common.Market(id, exchange, pair, active);
 }
