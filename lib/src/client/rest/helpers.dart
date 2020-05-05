@@ -1,4 +1,4 @@
-part of client;
+part of rest;
 
 common.Asset _parseAsset(Map<String, dynamic> props) {
   var id = props["id"];

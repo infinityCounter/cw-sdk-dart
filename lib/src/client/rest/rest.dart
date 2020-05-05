@@ -1,4 +1,12 @@
-part of client;
+library rest;
+
+import 'dart:convert' as convert show jsonDecode;
+
+import 'package:http/http.dart' as http show Client, read;
+
+import '../../common/common.dart' as common;
+
+part 'helpers.dart';
 
 // defaultApiDomain is the current (as of May 1, 2020) production domain for Cryptowatch's REST API.
 const defaultApiDomain = "api.cryptowat.ch";
@@ -9,15 +17,15 @@ const _apiKeyHeader = "X-CW-API-Key";
 
 var httpClient = http.Client();
 
-/// BasicRestApiClient provides an interface for interacting with the Cryptowatch REST API.
+/// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
 ///
 /// The methods implemented by this class all return a Future object instead of the actual
 /// result. CW API docs available at: https://docs.cryptowat.ch/rest-api/
-class BasicRestApiClient {
+class RestApiClient {
   final String _apiDomain;
   final String _apiKey;
 
-  BasicRestApiClient({String apiDomain: defaultApiDomain, String apiKey: ""})
+  RestApiClient({String apiDomain: defaultApiDomain, String apiKey: ""})
       : this._apiDomain = apiDomain,
         this._apiKey = apiKey {}
 

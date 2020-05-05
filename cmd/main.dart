@@ -2,11 +2,10 @@ library cmd;
 
 import 'dart:io' as io;
 
-import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk
-    show RestApiClientWithCache;
+import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk show RestApiClient;
 
 main() {
-  var apiClient = new sdk.RestApiClientWithCache();
+  var apiClient = new sdk.RestApiClient();
   var futures = new List<Future>();
 
   futures.add(apiClient.fetchAssets());
