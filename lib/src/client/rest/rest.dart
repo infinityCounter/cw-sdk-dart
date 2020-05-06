@@ -239,4 +239,27 @@ class RestApiClient {
 
     return ret;
   }
+
+  Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
+      String exchangeSym, String pairSym) {
+    var ret = Future(() {
+      var respFuture =
+          this._doApiRequest("markets/${exchangeSym}/${pairSym}/orderbook");
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedSnapshot = unpacked["result"];
+        if (unparsedSnapshot is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parseOrderBookSnapshot(unparsedSnapshot);
+      });
+    });
+
+    return ret;
+  }
 }

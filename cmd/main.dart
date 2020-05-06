@@ -2,7 +2,8 @@ library cmd;
 
 import 'dart:io' as io;
 
-import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk show RestApiClient;
+import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk
+    show RestApiClient, OrderBook;
 
 main() {
   var apiClient = new sdk.RestApiClient();
@@ -16,6 +17,7 @@ main() {
   futures.add(apiClient.fetchPair("btcusd"));
   futures.add(apiClient.fetchExchange("bitfinex"));
   futures.add(apiClient.fetchMarket("bitfinex", "btcusd"));
+  futures.add(apiClient.fetchOrderBookSnapshot("bitfinex", "btcusd"));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -26,6 +28,8 @@ main() {
     var btcusd = results[5];
     var bitfinex = results[6];
     var bitfinexBtcUsd = results[7];
+    var snapshot = results[8];
+    var book = new sdk.OrderBook.fromSnapshot(snapshot);
 
     for (var a in assets) {
       print(a);
@@ -47,6 +51,8 @@ main() {
     print(btcusd);
     print(bitfinex);
     print(bitfinexBtcUsd);
+    print(snapshot);
+    print(book.aggregatedSnapshot(10000));
 
     io.exit(0);
   }, onError: (e) {

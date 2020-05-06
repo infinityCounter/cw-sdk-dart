@@ -11,6 +11,10 @@ class OrderBookSnapshot {
     this.asks.addAll(asks);
     this.bids.addAll(bids);
   }
+
+  toString() {
+    return "OrderBookSnapshot(Asks=${this.asks}, Bids=${this.bids}, SeqNum=${this.seqNum})";
+  }
 }
 
 class OrderBookDelta {
@@ -31,6 +35,8 @@ class OrderBookDelta {
     this.removeAskPriceLevels.addAll(removeAskPriceLevels);
     this.reomveBidPriceLevels.addAll(removeBidPriceLevels);
   }
+
+  // TODO: Add a toString methid for this.
 }
 
 class OrderBook {
@@ -54,7 +60,7 @@ class OrderBook {
   }
 
   Iterable<PublicOrder> get asks {
-    var orders = this._asks.entries.map((entry) => entry.value);
+    var orders = this._asks.entries.map((entry) => entry.value).toList();
     sortPublicOrders(orders);
 
     return orders;
@@ -74,7 +80,7 @@ class OrderBook {
   }
 
   Iterable<PublicOrder> get bids {
-    var orders = this._bids.entries.map((entry) => entry.value);
+    var orders = this._bids.entries.map((entry) => entry.value).toList();
     sortPublicOrders(orders);
 
     return orders;
@@ -148,5 +154,9 @@ class OrderBook {
     for (var pl in delta.reomveBidPriceLevels) {
       this._bids.remove(pl);
     }
+  }
+
+  toString() {
+    return "OrderBook(Asks=${this.asks}, Bids=${this.bids}, SeqNum=${this.seqNum})";
   }
 }

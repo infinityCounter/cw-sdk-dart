@@ -51,11 +51,14 @@ Iterable<PublicOrder> aggregatePublicOrders(
     Iterable<PublicOrder> orders, num aggLevel) {
   var aggOrders = new Map<num, PublicOrder>();
   for (var o in orders) {
-    var remainder = o.price.abs() % aggLevel;
+    var absPrice = o.price.abs();
+    var remainder = absPrice % aggLevel;
 
     var lvl;
     if (remainder == 0) {
       lvl = o.price;
+    } else if (remainder == absPrice) {
+      lvl = aggLevel;
     } else if (!o.price.isNegative) {
       lvl = o.price + aggLevel - remainder;
     } else {
