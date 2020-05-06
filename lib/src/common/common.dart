@@ -151,7 +151,7 @@ class OrderBook {
 
   set bids(List<PublicOrder> orders) {
     sortPublicOrders(orders);
-    this._asks = orders;
+    this._bids = orders;
   }
 
   OrderBookSnapshot get Snapshot {
