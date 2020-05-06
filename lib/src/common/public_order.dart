@@ -46,3 +46,30 @@ sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
     }
   });
 }
+
+Iterable<PublicOrder> aggregatePublicOrders(
+    Iterable<PublicOrder> orders, num aggLevel) {
+  var aggOrders = new Map<num, PublicOrder>();
+  for (var o in orders) {
+    var remainder = o.price.abs() % aggLevel;
+
+    var lvl;
+    if (remainder == 0) {
+      lvl = o.price;
+    } else if (!o.price.isNegative) {
+      lvl = o.price + aggLevel - remainder;
+    } else {
+      lvl = o.price - aggLevel + remainder;
+    }
+
+    var co = aggOrders[lvl];
+    if (co != null) {
+      co.amount += o.amount;
+      aggOrders[lvl] = co;
+    } else {
+      aggOrders[lvl] = PublicOrder(lvl, o.amount);
+    }
+  }
+
+  return aggOrders.values;
+}

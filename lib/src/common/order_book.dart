@@ -93,12 +93,29 @@ class OrderBook {
     }
   }
 
-  OrderBookSnapshot get Snapshot {
-    return OrderBookSnapshot(this.asks, this.bids);
+  OrderBookSnapshot get snapshot {
+    return OrderBookSnapshot(this.asks, this.bids, this.seqNum);
   }
 
   OrderBookSnapshot aggregatedSnapshot(num aggLevel) {
-    // TODO: implement this.
+    if (aggLevel == null || aggLevel == 0) {
+      return this.snapshot;
+    }
+
+    var execption = ArgumentError.value(
+      aggLevel,
+      "aggLevel",
+      "Aggregation level must be a finite non-negative number or null",
+    );
+
+    if (aggLevel.isNaN || aggLevel.isNegative || aggLevel.isInfinite) {
+      throw execption;
+    }
+
+    var aggAsks = aggregatePublicOrders(this._asks.values, aggLevel);
+    var aggBids = aggregatePublicOrders(this._bids.values, aggLevel);
+
+    return OrderBookSnapshot(aggAsks, aggBids, this.seqNum);
   }
 
   applySnapshot(OrderBookSnapshot snapshot, [bool disregardSeq = false]) {
