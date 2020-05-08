@@ -70,7 +70,7 @@ class RestApiClient {
   /// Returns a Future that resolves to the asset on Cryptowatch REST API with the symbol [sym].
   Future<common.Asset> fetchAsset(String sym) {
     var ret = Future(() {
-      var respFuture = this._doApiRequest("assets/${sym}");
+      var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
@@ -120,7 +120,7 @@ class RestApiClient {
   /// Returns a Future that resolves to the pair on Cryptowatch REST API with the symbol [sym].
   Future<common.Pair> fetchPair(String sym) {
     var ret = Future(() {
-      var respFuture = this._doApiRequest("pairs/${sym}");
+      var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
@@ -170,7 +170,8 @@ class RestApiClient {
   /// Returns a Future that resolves to the exchange on Cryptowatch REST API with the symbol [sym].
   Future<common.Exchange> fetchExchange(String sym) {
     var ret = Future(() {
-      var respFuture = this._doApiRequest("exchanges/${sym}");
+      var respFuture =
+          this._doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
@@ -197,7 +198,7 @@ class RestApiClient {
     var ret = Future(() {
       var path = "markets";
       if (exchangeSym != null) {
-        path += "/${exchangeSym}";
+        path += "/${Uri.encodeComponent(exchangeSym)}";
       }
 
       var respFuture = this._doApiRequest(path);
@@ -229,6 +230,9 @@ class RestApiClient {
   /// the exchange [exchangeSym] and pair [pairSym].
   Future<common.Market> fetchMarket(String exchangeSym, String pairSym) {
     var ret = Future(() {
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
+
       var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
@@ -253,6 +257,9 @@ class RestApiClient {
   Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
       String exchangeSym, String pairSym) {
     var ret = Future(() {
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
+
       var path = "markets/${exchangeSym}/${pairSym}/orderbook";
       var respFuture = this._doApiRequest(path);
 
@@ -302,6 +309,9 @@ class RestApiClient {
       if (after != null) {
         params["after"] = after.toString();
       }
+
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/ohlc";
       var respFuture = this._doApiRequest(path, params);
