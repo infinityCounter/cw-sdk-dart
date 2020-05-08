@@ -18,6 +18,13 @@ main() {
   futures.add(apiClient.fetchExchange("bitfinex"));
   futures.add(apiClient.fetchMarket("bitfinex", "btcusd"));
   futures.add(apiClient.fetchOrderBookSnapshot("bitfinex", "btcusd"));
+  futures.add(apiClient.fetchCandles(
+    "bitfinex",
+    "btcdomusdt-perpetual-futures",
+    periods: ["60"],
+    before: 1588850880,
+    after: 1588810620,
+  ));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -30,6 +37,7 @@ main() {
     var bitfinexBtcUsd = results[7];
     var snapshot = results[8];
     var book = new sdk.OrderBook.fromSnapshot(snapshot);
+    var candles = results[9];
 
     for (var a in assets) {
       print(a);
@@ -53,6 +61,7 @@ main() {
     print(bitfinexBtcUsd);
     print(snapshot);
     print(book.aggregatedSnapshot(10000));
+    print(candles);
 
     io.exit(0);
   }, onError: (e) {

@@ -29,8 +29,8 @@ class RestApiClient {
       : this._apiDomain = apiDomain,
         this._apiKey = apiKey {}
 
-  Future<String> _doApiRequest(String path) {
-    var endpoint = Uri.https(this._apiDomain, path);
+  Future<String> _doApiRequest(String path, [Map<String, String> params]) {
+    var endpoint = Uri.https(this._apiDomain, path, params);
 
     if (this._apiKey is String && this._apiKey != "") {
       return http.read(endpoint, headers: {_apiKeyHeader: this._apiKey});
@@ -240,11 +240,14 @@ class RestApiClient {
     return ret;
   }
 
+  /// Returns a Future that resolves to an order book snapshot from the
+  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
   Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
       String exchangeSym, String pairSym) {
     var ret = Future(() {
-      var respFuture =
-          this._doApiRequest("markets/${exchangeSym}/${pairSym}/orderbook");
+      var path = "markets/${exchangeSym}/${pairSym}/orderbook";
+      var respFuture = this._doApiRequest(path);
+
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
@@ -257,6 +260,62 @@ class RestApiClient {
         }
 
         return _parseOrderBookSnapshot(unparsedSnapshot);
+      });
+    });
+
+    return ret;
+  }
+
+  /// Returns a Future that resolves to map of candles from the
+  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
+  ///
+  /// The map is keyed by the interval period, e.g. "60", "300", "900".
+  /// There are additional parameters that can be specified to only get a subset of
+  /// candles: periods, before and after. Please see the Cryptowatch REST API
+  /// documentation for their usage.
+  Future<Map<String, Iterable<common.Candle>>> fetchCandles(
+    String exchangeSym,
+    String pairSym, {
+    Iterable<String> periods,
+    int before,
+    int after,
+  }) {
+    var ret = Future(() {
+      var params = new Map<String, String>();
+
+      if (periods != null && periods.length > 0) {
+        params["periods"] = periods.join(",");
+      }
+
+      if (before != null) {
+        params["before"] = before.toString();
+      }
+
+      if (after != null) {
+        params["after"] = after.toString();
+      }
+
+      var path = "markets/${exchangeSym}/${pairSym}/ohlc";
+      var respFuture = this._doApiRequest(path, params);
+
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        Map<String, dynamic> unparsedCandles = unpacked["result"];
+        if (unparsedCandles is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var periodCandles = new Map<String, Iterable<common.Candle>>();
+
+        unparsedCandles.entries.forEach((entry) {
+          periodCandles[entry.key] = _parseCandles(entry.value);
+        });
+
+        return periodCandles;
       });
     });
 

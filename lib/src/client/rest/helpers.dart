@@ -96,3 +96,33 @@ common.OrderBookSnapshot _parseOrderBookSnapshot(Map<String, dynamic> props) {
 
   return new common.OrderBookSnapshot(asks, bids, seqNum);
 }
+
+common.Candle _parseCandle(Iterable props) {
+  if (props.length < 7) {
+    throw unexpectedResponseFormat;
+  }
+
+  return new common.Candle()
+    ..timestamp = props.elementAt(0)
+    ..open = props.elementAt(1)
+    ..high = props.elementAt(2)
+    ..low = props.elementAt(3)
+    ..close = props.elementAt(4)
+    ..volumeBase = props.elementAt(5)
+    ..volumeQuote = props.elementAt(6);
+}
+
+Iterable<common.Candle> _parseCandles(Iterable props) {
+  var candles = new List<common.Candle>();
+
+  for (var p in props) {
+    if (p is! Iterable) {
+      throw unexpectedResponseFormat;
+    }
+
+    var candle = _parseCandle(p);
+    candles.add(candle);
+  }
+
+  return candles;
+}
