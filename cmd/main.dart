@@ -27,6 +27,7 @@ main() {
     after: 1588810620,
   ));
   futures.add(apiClient.fetchSummary("bitfinex", "btcusd"));
+  futures.add(apiClient.fetchMarketPrice("bitfinex", "btcusd"));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -42,6 +43,7 @@ main() {
     var book = new sdk.OrderBook.fromSnapshot(snapshot);
     var candles = results[10];
     var summary = results[11];
+    var price = results[12];
 
     // for (var a in assets) {
     //   print(a);
@@ -71,6 +73,7 @@ main() {
     // print(book.aggregatedSnapshot(10000));
     // print(candles);
     // print(summary);
+    // print(price);
 
     io.exit(0);
   }, onError: (e) {

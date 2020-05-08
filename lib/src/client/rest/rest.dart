@@ -367,4 +367,38 @@ class RestApiClient {
 
     return ret;
   }
+
+  /// Returns a Future that resolves to the current price for the market
+  /// with exchange [exchangeSym] and pair [pairSym].
+  Future<num> fetchMarketPrice(String exchangeSym, String pairSym) {
+    var ret = Future(() {
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
+
+      var path = "markets/${exchangeSym}/${pairSym}/price";
+      var respFuture = this._doApiRequest(path);
+
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedPrice = unpacked["result"];
+        if (unparsedPrice is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var price = unparsedPrice["price"];
+        if (price == null || price is! num) {
+          throw unexpectedResponseFormat;
+        }
+
+        num priceAsNum = price;
+        return priceAsNum;
+      });
+    });
+
+    return ret;
+  }
 }
