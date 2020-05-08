@@ -26,6 +26,7 @@ main() {
     before: 1588850880,
     after: 1588810620,
   ));
+  futures.add(apiClient.fetchSummary("bitfinex", "btcusd"));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -40,6 +41,7 @@ main() {
     var snapshot = results[9];
     var book = new sdk.OrderBook.fromSnapshot(snapshot);
     var candles = results[10];
+    var summary = results[11];
 
     // for (var a in assets) {
     //   print(a);
@@ -57,9 +59,9 @@ main() {
     //   print(m);
     // }
 
-    for (var m in krakenMarkets) {
-      print(m);
-    }
+    // for (var m in krakenMarkets) {
+    //   print(m);
+    // }
 
     // print(btc);
     // print(btcusd);
@@ -68,6 +70,7 @@ main() {
     // print(snapshot);
     // print(book.aggregatedSnapshot(10000));
     // print(candles);
+    // print(summary);
 
     io.exit(0);
   }, onError: (e) {

@@ -39,7 +39,7 @@ class RestApiClient {
     return http.read(endpoint);
   }
 
-  /// Returns a Future that resolves to a list of assets from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of assets fetched from the cryptowatch REST API.
   Future<List<common.Asset>> fetchAssets() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
@@ -89,7 +89,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of pairs from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of pairs fetched from the cryptowatch REST API.
   Future<List<common.Pair>> fetchPairs() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
@@ -139,7 +139,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of exchanges from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of exchanges fetched from the cryptowatch REST API.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("exchanges");
@@ -190,7 +190,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of markets from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of markets fetched from the cryptowatch REST API.
   ///
   /// If the [exchangeSym] argument is set, only markets for that exchange will be included
   /// in the response.
@@ -252,7 +252,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to an order book snapshot from the
+  /// Returns a Future that resolves to an order book snapshot fetched from the
   /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
   Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
       String exchangeSym, String pairSym) {
@@ -281,7 +281,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to map of candles from the
+  /// Returns a Future that resolves to map of candles fetched from the
   /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
   ///
   /// The map is keyed by the interval period, e.g. "60", "300", "900".
@@ -334,6 +334,34 @@ class RestApiClient {
         });
 
         return periodCandles;
+      });
+    });
+
+    return ret;
+  }
+
+  /// Returns a Future that resolves to a summary fetched from the
+  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
+  Future<common.Summary> fetchSummary(String exchangeSym, String pairSym) {
+    var ret = Future(() {
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
+
+      var path = "markets/${exchangeSym}/${pairSym}/summary";
+      var respFuture = this._doApiRequest(path);
+
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedSummary = unpacked["result"];
+        if (unparsedSummary is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parseSummary(unparsedSummary);
       });
     });
 

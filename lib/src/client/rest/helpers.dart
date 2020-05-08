@@ -126,3 +126,59 @@ Iterable<common.Candle> _parseCandles(Iterable props) {
 
   return candles;
 }
+
+common.Summary _parseSummary(Map<String, dynamic> props) {
+  var priceProps = props["price"];
+  if (priceProps == null || priceProps is! Map<String, dynamic>) {
+    throw unexpectedResponseFormat;
+  }
+
+  var changeProps = priceProps["change"];
+  if (changeProps == null || changeProps is! Map<String, dynamic>) {
+    throw unexpectedResponseFormat;
+  }
+
+  var last = priceProps["last"];
+  if (last == null || last is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var high = priceProps["high"];
+  if (high == null || high is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var low = priceProps["low"];
+  if (low == null || low is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var changeAbs = changeProps["absolute"];
+  if (changeAbs == null || changeAbs is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var changePerc = changeProps["percentage"];
+  if (changePerc == null || changePerc is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var volBase = props["volume"];
+  if (volBase == null || volBase is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  var volQuote = props["volumeQuote"];
+  if (volQuote == null || volQuote is! num) {
+    throw unexpectedResponseFormat;
+  }
+
+  return common.Summary()
+    ..last = last
+    ..high = high
+    ..low = low
+    ..changeAbsolute = changeAbs
+    ..changePercentage = changePerc
+    ..volumeBase = volBase
+    ..volumeQuote = volQuote;
+}
