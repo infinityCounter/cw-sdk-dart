@@ -182,3 +182,30 @@ common.Summary _parseSummary(Map<String, dynamic> props) {
     ..volumeBase = volBase
     ..volumeQuote = volQuote;
 }
+
+common.PublicTrade _parsePublicTrade(Iterable props) {
+  if (props.length < 4) {
+    throw unexpectedResponseFormat;
+  }
+
+  return new common.PublicTrade()
+    ..id = props.elementAt(0)
+    ..timestamp = props.elementAt(1)
+    ..price = props.elementAt(2)
+    ..amount = props.elementAt(3);
+}
+
+Iterable<common.PublicTrade> _parsePublicTrades(Iterable props) {
+  var trades = new List<common.PublicTrade>();
+
+  for (var p in props) {
+    if (p is! Iterable) {
+      throw unexpectedResponseFormat;
+    }
+
+    var trade = _parsePublicTrade(p);
+    trades.add(trade);
+  }
+
+  return trades;
+}

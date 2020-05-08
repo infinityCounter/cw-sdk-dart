@@ -9,3 +9,4 @@ part 'public_order.dart';
 part 'order_book.dart';
 part 'candle.dart';
 part 'summary.dart';
+part 'public_trade.dart';

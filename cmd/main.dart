@@ -28,6 +28,12 @@ main() {
   ));
   futures.add(apiClient.fetchSummary("bitfinex", "btcusd"));
   futures.add(apiClient.fetchMarketPrice("bitfinex", "btcusd"));
+  futures.add(apiClient.fetchTrades(
+    "bitfinex",
+    "btcusd",
+    since: 1588913266,
+    limit: 3,
+  ));
 
   Future.wait(futures).then((List<dynamic> results) {
     var assets = results[0];
@@ -44,6 +50,7 @@ main() {
     var candles = results[10];
     var summary = results[11];
     var price = results[12];
+    var trades = results[13];
 
     // for (var a in assets) {
     //   print(a);
@@ -74,6 +81,7 @@ main() {
     // print(candles);
     // print(summary);
     // print(price);
+    // print(trades);
 
     io.exit(0);
   }, onError: (e) {

@@ -39,8 +39,8 @@ class RestApiClient {
     return http.read(endpoint);
   }
 
-  /// Returns a Future that resolves to a list of all assets.
-  Future<List<common.Asset>> fetchAssets() {
+  /// Returns a Future that resolves to an iterable collection of all assets.
+  Future<Iterable<common.Asset>> fetchAssets() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
       return respFuture.then((respBody) {
@@ -50,7 +50,7 @@ class RestApiClient {
         }
 
         var unparsedAssetList = unpacked["result"];
-        if (unparsedAssetList is! List) {
+        if (unparsedAssetList is! Iterable) {
           throw unexpectedResponseFormat;
         }
 
@@ -89,8 +89,8 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the list of  all asset pairs.
-  Future<List<common.Pair>> fetchPairs() {
+  /// Returns a Future that resolves to an iterable collection of all asset pairs.
+  Future<Iterable<common.Pair>> fetchPairs() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
       return respFuture.then((respBody) {
@@ -100,7 +100,7 @@ class RestApiClient {
         }
 
         var unparsedPairList = unpacked["result"];
-        if (unparsedPairList is! List) {
+        if (unparsedPairList is! Iterable) {
           throw unexpectedResponseFormat;
         }
 
@@ -139,7 +139,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of all exchanges.
+  /// Returns a Future that resolves to an iterable collection of all exchanges.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("exchanges");
@@ -150,7 +150,7 @@ class RestApiClient {
         }
 
         var unparsedExchangeList = unpacked["result"];
-        if (unparsedExchangeList is! List) {
+        if (unparsedExchangeList is! Iterable) {
           throw unexpectedResponseFormat;
         }
 
@@ -190,7 +190,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of all markets.
+  /// Returns a Future that resolves to an iterable collection of all markets.
   ///
   /// If the [exchangeSym] argument is set, only markets for that exchange will be included
   /// in the response.
@@ -209,7 +209,7 @@ class RestApiClient {
         }
 
         var unparsedMarketList = unpacked["result"];
-        if (unparsedMarketList is! List) {
+        if (unparsedMarketList is! Iterable) {
           throw unexpectedResponseFormat;
         }
 
@@ -396,6 +396,53 @@ class RestApiClient {
 
         num priceAsNum = price;
         return priceAsNum;
+      });
+    });
+
+    return ret;
+  }
+
+  /// Returns a Future that resolves to an iterable collection of
+  /// recent trades for the market with exchange [exchangeSym] and pair [pairSym].
+  ///
+  /// There are additional parameters that can be specified to query a
+  /// specific set of trades: since, and limit. Please see the Cryptowatch REST API
+  /// documentation for their usage.
+  Future<Iterable<common.PublicTrade>> fetchTrades(
+    String exchangeSym,
+    String pairSym, {
+    int since,
+    int limit,
+  }) {
+    var ret = Future(() {
+      var params = new Map<String, String>();
+
+      if (since != null) {
+        params["since"] = since.toString();
+      }
+
+      if (limit != null) {
+        params["limit"] = limit.toString();
+      }
+
+      exchangeSym = Uri.encodeComponent(exchangeSym);
+      pairSym = Uri.encodeComponent(pairSym);
+
+      var path = "markets/${exchangeSym}/${pairSym}/trades";
+      var respFuture = this._doApiRequest(path, params);
+
+      return respFuture.then((respBody) {
+        var unpacked = convert.jsonDecode(respBody);
+        if (unpacked is! Map) {
+          throw unexpectedResponseFormat;
+        }
+
+        var unparsedTrades = unpacked["result"];
+        if (unparsedTrades is! Iterable) {
+          throw unexpectedResponseFormat;
+        }
+
+        return _parsePublicTrades(unparsedTrades);
       });
     });
 
