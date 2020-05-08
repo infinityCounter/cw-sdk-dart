@@ -13,6 +13,7 @@ main() {
   futures.add(apiClient.fetchPairs());
   futures.add(apiClient.fetchExchanges());
   futures.add(apiClient.fetchMarkets());
+  futures.add(apiClient.fetchMarkets("kraken"));
   futures.add(apiClient.fetchAsset("btc"));
   futures.add(apiClient.fetchPair("btcusd"));
   futures.add(apiClient.fetchExchange("bitfinex"));
@@ -31,37 +32,42 @@ main() {
     var pairs = results[1];
     var exchanges = results[2];
     var markets = results[3];
-    var btc = results[4];
-    var btcusd = results[5];
-    var bitfinex = results[6];
-    var bitfinexBtcUsd = results[7];
-    var snapshot = results[8];
+    var krakenMarkets = results[4];
+    var btc = results[5];
+    var btcusd = results[6];
+    var bitfinex = results[7];
+    var bitfinexBtcUsd = results[8];
+    var snapshot = results[9];
     var book = new sdk.OrderBook.fromSnapshot(snapshot);
-    var candles = results[9];
+    var candles = results[10];
 
-    for (var a in assets) {
-      print(a);
-    }
+    // for (var a in assets) {
+    //   print(a);
+    // }
 
-    for (var p in pairs) {
-      print(p);
-    }
+    // for (var p in pairs) {
+    //   print(p);
+    // }
 
-    for (var e in exchanges) {
-      print(e);
-    }
+    // for (var e in exchanges) {
+    //   print(e);
+    // }
 
-    for (var m in markets) {
+    // for (var m in markets) {
+    //   print(m);
+    // }
+
+    for (var m in krakenMarkets) {
       print(m);
     }
 
-    print(btc);
-    print(btcusd);
-    print(bitfinex);
-    print(bitfinexBtcUsd);
-    print(snapshot);
-    print(book.aggregatedSnapshot(10000));
-    print(candles);
+    // print(btc);
+    // print(btcusd);
+    // print(bitfinex);
+    // print(bitfinexBtcUsd);
+    // print(snapshot);
+    // print(book.aggregatedSnapshot(10000));
+    // print(candles);
 
     io.exit(0);
   }, onError: (e) {

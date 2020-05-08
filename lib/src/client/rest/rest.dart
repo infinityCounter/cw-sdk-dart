@@ -190,9 +190,17 @@ class RestApiClient {
   }
 
   /// Returns a Future that resolves to a list of markets from the cryptowatch REST API.
-  Future<List<common.Market>> fetchMarkets() {
+  ///
+  /// If the [exchangeSym] argument is set, only markets for that exchange will be included
+  /// in the response.
+  Future<List<common.Market>> fetchMarkets([String exchangeSym]) {
     var ret = Future(() {
-      var respFuture = this._doApiRequest("markets");
+      var path = "markets";
+      if (exchangeSym != null) {
+        path += "/${exchangeSym}";
+      }
+
+      var respFuture = this._doApiRequest(path);
       return respFuture.then((respBody) {
         var unpacked = convert.jsonDecode(respBody);
         if (unpacked is! Map) {
