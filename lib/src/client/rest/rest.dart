@@ -39,7 +39,7 @@ class RestApiClient {
     return http.read(endpoint);
   }
 
-  /// Returns a Future that resolves to a list of assets fetched from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of all assets.
   Future<List<common.Asset>> fetchAssets() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
@@ -67,7 +67,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the asset on Cryptowatch REST API with the symbol [sym].
+  /// Returns a Future that resolves to the asset with symbol [sym].
   Future<common.Asset> fetchAsset(String sym) {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
@@ -89,7 +89,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of pairs fetched from the cryptowatch REST API.
+  /// Returns a Future that resolves to the list of  all asset pairs.
   Future<List<common.Pair>> fetchPairs() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
@@ -117,7 +117,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the pair on Cryptowatch REST API with the symbol [sym].
+  /// Returns a Future that resolves to the pair with symbol [sym].
   Future<common.Pair> fetchPair(String sym) {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
@@ -139,7 +139,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of exchanges fetched from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of all exchanges.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("exchanges");
@@ -167,7 +167,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the exchange on Cryptowatch REST API with the symbol [sym].
+  /// Returns a Future that resolves to the exchange with symbol [sym].
   Future<common.Exchange> fetchExchange(String sym) {
     var ret = Future(() {
       var respFuture =
@@ -190,7 +190,7 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a list of markets fetched from the cryptowatch REST API.
+  /// Returns a Future that resolves to a list of all markets.
   ///
   /// If the [exchangeSym] argument is set, only markets for that exchange will be included
   /// in the response.
@@ -226,8 +226,8 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the market on Cryptowatch REST API for
-  /// the exchange [exchangeSym] and pair [pairSym].
+  /// Returns a Future that resolves to the market
+  /// with exchange [exchangeSym] and pair [pairSym].
   Future<common.Market> fetchMarket(String exchangeSym, String pairSym) {
     var ret = Future(() {
       exchangeSym = Uri.encodeComponent(exchangeSym);
@@ -252,8 +252,8 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to an order book snapshot fetched from the
-  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
+  /// Returns a Future that resolves to the current order book snapshot
+  /// for the market with exchange [exchangeSym] and pair [pairSym].
   Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
       String exchangeSym, String pairSym) {
     var ret = Future(() {
@@ -281,8 +281,8 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to map of candles fetched from the
-  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
+  /// Returns a Future that resolves to a map of candles fetched for the
+  /// market with exchange [exchangeSym] and pair [pairSym].
   ///
   /// The map is keyed by the interval period, e.g. "60", "300", "900".
   /// There are additional parameters that can be specified to only get a subset of
@@ -340,8 +340,8 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to a summary fetched from the
-  /// Cryptowatch REST API for the exchange [exchangeSym] and pair [pairSym].
+  /// Returns a Future that resolves to the current summary for the market
+  /// with exchange [exchangeSym] and pair [pairSym].
   Future<common.Summary> fetchSummary(String exchangeSym, String pairSym) {
     var ret = Future(() {
       exchangeSym = Uri.encodeComponent(exchangeSym);
