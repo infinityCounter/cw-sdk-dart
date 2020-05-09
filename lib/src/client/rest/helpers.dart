@@ -21,7 +21,7 @@ common.Asset _parseAsset(Map<String, dynamic> props) {
     throw _buildException("fiat", "bool", fiat);
   }
 
-  return new common.Asset()
+  return common.Asset()
     ..id = id
     ..name = name
     ..symbol = symbol
@@ -29,20 +29,30 @@ common.Asset _parseAsset(Map<String, dynamic> props) {
 }
 
 common.Pair _parsePair(Map<String, dynamic> props) {
-  // TODO: Enforce some type checks and throw exceptions otherwise.
   var id = props["id"];
+  if (id is! int) {
+    throw _buildException("id", "int", id);
+  }
+
   var symbol = props["symbol"];
+  if (symbol is! String) {
+    throw _buildException("symbol", "String", symbol);
+  }
+
+  var futuresContractPeriod = props["futuresContractPeriod"];
+  if (symbol is! String) {
+    throw _buildException(
+        "futuresContractPeriod", "String", futuresContractPeriod);
+  }
+
   var base = _parseAsset(props["base"]);
   var quote = _parseAsset(props["quote"]);
-  var futuresContractPeriod = props["futuresContractPeriod"];
 
-  return new common.Pair(
-    id,
-    symbol,
-    base,
-    quote,
-    futuresContractPeriod,
-  );
+  return common.Pair()
+    ..id = id
+    ..base = base
+    ..quote = quote
+    ..futuresContractPeriod = futuresContractPeriod;
 }
 
 common.Exchange _parseExchange(Map<String, dynamic> props) {

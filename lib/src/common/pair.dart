@@ -9,9 +9,6 @@ class Pair {
   String symbol;
   String futuresContractPeriod;
 
-  Pair(this.id, this.symbol, this.base, this.quote,
-      [this.futuresContractPeriod]);
-
   toString() {
     List<String> props = [
       "id=${this.id}",
