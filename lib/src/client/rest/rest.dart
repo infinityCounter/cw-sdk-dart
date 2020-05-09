@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http show Client, read;
 import '../../common/common.dart' as common;
 
 part 'helpers.dart';
+part 'exceptions.dart';
 
 // defaultApiDomain is the current (as of May 1, 2020) production domain for Cryptowatch's REST API.
 const defaultApiDomain = "api.cryptowat.ch";

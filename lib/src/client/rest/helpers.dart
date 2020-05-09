@@ -1,13 +1,31 @@
 part of rest;
 
 common.Asset _parseAsset(Map<String, dynamic> props) {
-  // TODO: Enforce some type checks and throw exceptions otherwise.
   var id = props["id"];
-  var name = props["name"];
-  var symbol = props["symbol"];
-  var fiat = props["fiat"];
+  if (id is! int) {
+    throw _buildException("id", "int", id);
+  }
 
-  return new common.Asset(id, name, symbol, fiat);
+  var name = props["name"];
+  if (name is! String) {
+    throw _buildException("name", "String", name);
+  }
+
+  var symbol = props["symbol"];
+  if (symbol is! String) {
+    throw _buildException("symbol", "String", symbol);
+  }
+
+  var fiat = props["fiat"];
+  if (fiat is! bool) {
+    throw _buildException("fiat", "bool", fiat);
+  }
+
+  return new common.Asset()
+    ..id = id
+    ..name = name
+    ..symbol = symbol
+    ..fiat = fiat;
 }
 
 common.Pair _parsePair(Map<String, dynamic> props) {
@@ -208,4 +226,14 @@ Iterable<common.PublicTrade> _parsePublicTrades(Iterable props) {
   }
 
   return trades;
+}
+
+UnexpectedResponseFormatException _buildException(
+  String wantField,
+  String wantType,
+  got,
+) {
+  return UnexpectedResponseFormatException(
+    "expected ${wantType} field ${wantField}, instead got ${got.runtimeType}(${got})",
+  );
 }
