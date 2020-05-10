@@ -13,10 +13,19 @@ class OrderBookSnapshot {
   }
 
   toString() {
-    return "OrderBookSnapshot(Asks=${this.asks}, Bids=${this.bids}, SeqNum=${this.seqNum})";
+    var asksJson = convert.jsonEncode(this.asks);
+    var bidsJson = convert.jsonEncode(this.bids);
+
+    return "OrderBookSnapshot(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }
 }
 
+/// An OrderBookDelta represents a diff between 2 orderbook snapshots.
+///
+/// These messages are only available over the Cryptowatch WS API and not
+/// the REST API.
+/// For more on these order book deltas:
+/// https://docs.cryptowat.ch/websocket-api/data-subscriptions/order-books#deltas
 class OrderBookDelta {
   final int seqNum;
 
@@ -24,7 +33,7 @@ class OrderBookDelta {
   final setBids = List<PublicOrder>();
 
   final removeAskPriceLevels = List<num>();
-  final reomveBidPriceLevels = List<num>();
+  final removeBidPriceLevels = List<num>();
 
   OrderBookDelta(Iterable<PublicOrder> setAsks, Iterable<PublicOrder> setBids,
       Iterable<num> removeAskPriceLevels, Iterable<num> removeBidPriceLevels,
@@ -33,10 +42,23 @@ class OrderBookDelta {
     this.setBids.addAll(setBids);
 
     this.removeAskPriceLevels.addAll(removeAskPriceLevels);
-    this.reomveBidPriceLevels.addAll(removeBidPriceLevels);
+    this.removeBidPriceLevels.addAll(removeBidPriceLevels);
   }
 
-  // TODO: Add a toString methid for this.
+  toString() {
+    var asksJson = convert.jsonEncode(this.setAsks);
+    var bidsJson = convert.jsonEncode(this.setBids);
+
+    var props = [
+      "setAsks=${asksJson}",
+      "setBids=${bidsJson}",
+      "removeAskPriceLevels=${this.removeAskPriceLevels}",
+      "removeBidPriceLevels=${this.removeBidPriceLevels}",
+      "seqNum=${this.seqNum}",
+    ].join(",");
+
+    return "OrderBookDelta(${props})";
+  }
 }
 
 class OrderBook {
@@ -151,12 +173,15 @@ class OrderBook {
       this._asks.remove(pl);
     }
 
-    for (var pl in delta.reomveBidPriceLevels) {
+    for (var pl in delta.removeBidPriceLevels) {
       this._bids.remove(pl);
     }
   }
 
   toString() {
-    return "OrderBook(Asks=${this.asks}, Bids=${this.bids}, SeqNum=${this.seqNum})";
+    var asksJson = convert.jsonEncode(this.asks);
+    var bidsJson = convert.jsonEncode(this.bids);
+
+    return "OrderBook(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }
 }
