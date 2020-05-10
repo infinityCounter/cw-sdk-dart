@@ -2,23 +2,23 @@ part of rest;
 
 common.Asset _parseAsset(Map<String, dynamic> props) {
   var id = props["id"];
-  if (id is! int) {
-    throw _buildException("id", "int", id);
+  if (id is! String) {
+    throw _buildExceptionWrongFieldType("id", "int", id);
   }
 
   var name = props["name"];
   if (name is! String) {
-    throw _buildException("name", "String", name);
+    throw _buildExceptionWrongFieldType("name", "String", name);
   }
 
   var symbol = props["symbol"];
   if (symbol is! String) {
-    throw _buildException("symbol", "String", symbol);
+    throw _buildExceptionWrongFieldType("symbol", "String", symbol);
   }
 
   var fiat = props["fiat"];
   if (fiat is! bool) {
-    throw _buildException("fiat", "bool", fiat);
+    throw _buildExceptionWrongFieldType("fiat", "bool", fiat);
   }
 
   return common.Asset()
@@ -31,17 +31,17 @@ common.Asset _parseAsset(Map<String, dynamic> props) {
 common.Pair _parsePair(Map<String, dynamic> props) {
   var id = props["id"];
   if (id is! int) {
-    throw _buildException("id", "int", id);
+    throw _buildExceptionWrongFieldType("id", "int", id);
   }
 
   var symbol = props["symbol"];
   if (symbol is! String) {
-    throw _buildException("symbol", "String", symbol);
+    throw _buildExceptionWrongFieldType("symbol", "String", symbol);
   }
 
   var futuresContractPeriod = props["futuresContractPeriod"];
   if (symbol is! String) {
-    throw _buildException(
+    throw _buildExceptionWrongFieldType(
         "futuresContractPeriod", "String", futuresContractPeriod);
   }
 
@@ -56,38 +56,76 @@ common.Pair _parsePair(Map<String, dynamic> props) {
 }
 
 common.Exchange _parseExchange(Map<String, dynamic> props) {
-  // TODO: Enforce some type checks and throw exceptions otherwise.
   var id = props["id"];
-  var name = props["name"];
-  var symbol = props["symbol"];
-  var active = props["active"];
+  if (id is! int) {
+    throw _buildExceptionWrongFieldType("id", "int", id);
+  }
 
-  return new common.Exchange(id, name, symbol, active);
+  var name = props["name"];
+  if (name is! String) {
+    throw _buildExceptionWrongFieldType("name", "String", name);
+  }
+
+  var symbol = props["symbol"];
+  if (symbol is! String) {
+    throw _buildExceptionWrongFieldType("symbol", "String", symbol);
+  }
+
+  var active = props["active"];
+  if (active is! bool) {
+    throw _buildExceptionWrongFieldType("active", "bool", active);
+  }
+
+  return common.Exchange()
+    ..id = id
+    ..name = name
+    ..symbol = symbol
+    ..active = active;
 }
 
 common.Market _parseMarket(Map<String, dynamic> props) {
-  // TODO: Enforce some type checks and throw exceptions otherwise.
   var id = props["id"];
-  var exchange = props["exchange"];
-  var pair = props["pair"];
-  var active = props["active"];
+  if (id is! int) {
+    throw _buildExceptionWrongFieldType("id", "int", id);
+  }
 
-  return new common.Market(id, exchange, pair, active);
+  var exchange = props["exchange"];
+  if (exchange is! String) {
+    throw _buildExceptionWrongFieldType("exchange", "String", exchange);
+  }
+
+  var pair = props["pair"];
+  if (pair is! String) {
+    throw _buildExceptionWrongFieldType("pair", "String", pair);
+  }
+
+  var active = props["active"];
+  if (active is! bool) {
+    throw _buildExceptionWrongFieldType("active", "bool", active);
+  }
+
+  return common.Market()
+    ..id = id
+    ..exchange = exchange
+    ..pair = pair
+    ..active = active;
 }
 
 common.PublicOrder _parsePublicOrder(Iterable props) {
   if (props.length < 2) {
-    throw unexpectedResponseFormat;
+    throw UnexpectedResponseFormatException(
+      "expected order array to have at least 2 elements, got ${props}",
+    );
   }
 
   var price = props.elementAt(0);
   if (price is! num) {
-    throw unexpectedResponseFormat;
+    throw _buildExceptionWrongFieldType("price", "num", price);
   }
 
   var amount = props.elementAt(1);
   if (amount is! num) {
-    throw unexpectedResponseFormat;
+    throw _buildExceptionWrongFieldType("amount", "num", amount);
   }
 
   return common.PublicOrder(price, amount);
@@ -105,33 +143,47 @@ Iterable<common.PublicOrder> _parsePublicOrders(Iterable unparsedOrders) {
 common.OrderBookSnapshot _parseOrderBookSnapshot(Map<String, dynamic> props) {
   var unparsedAsks = props["asks"];
   if (unparsedAsks != null && unparsedAsks is! Iterable) {
-    throw unexpectedResponseFormat;
+    throw _buildExceptionWrongFieldType("asks", "Iterable", unparsedAsks);
   }
 
   var asks = _parsePublicOrders(unparsedAsks);
 
   var unparsedBids = props["bids"];
   if (unparsedBids != null && unparsedBids is! Iterable) {
-    throw unexpectedResponseFormat;
+    throw _buildExceptionWrongFieldType("bids", "Iterable", unparsedBids);
   }
 
   var bids = _parsePublicOrders(unparsedBids);
 
   var seqNum = props["seqNum"];
-  if (seqNum is! num) {
-    throw unexpectedResponseFormat;
+  if (seqNum is! int) {
+    throw _buildExceptionWrongFieldType("seqNum", "int", seqNum);
   }
 
-  return new common.OrderBookSnapshot(asks, bids, seqNum);
+  return common.OrderBookSnapshot(asks, bids, seqNum);
 }
 
 common.Candle _parseCandle(Iterable props) {
   if (props.length < 7) {
-    throw unexpectedResponseFormat;
+    throw UnexpectedResponseFormatException(
+      "expected candle array to have at least 7 elements, got ${props}",
+    );
   }
 
-  return new common.Candle()
-    ..timestamp = props.elementAt(0)
+  var timestamp = props.elementAt(0);
+  if (timestamp is! int) {
+    throw _buildExceptionWrongIndexType(0, "int", timestamp);
+  }
+
+  for (var i = 1; i < 7; i++) {
+    var p = props.elementAt(i);
+    if (p is! num) {
+      throw _buildExceptionWrongIndexType(i, "num", p);
+    }
+  }
+
+  return common.Candle()
+    ..timestamp = timestamp
     ..open = props.elementAt(1)
     ..high = props.elementAt(2)
     ..low = props.elementAt(3)
@@ -143,9 +195,10 @@ common.Candle _parseCandle(Iterable props) {
 Iterable<common.Candle> _parseCandles(Iterable props) {
   var candles = new List<common.Candle>();
 
-  for (var p in props) {
+  for (var i = 0; i < props.length; i++) {
+    var p = props.elementAt(i);
     if (p is! Iterable) {
-      throw unexpectedResponseFormat;
+      throw _buildExceptionWrongIndexType(i, "Iterable", p);
     }
 
     var candle = _parseCandle(p);
@@ -157,48 +210,56 @@ Iterable<common.Candle> _parseCandles(Iterable props) {
 
 common.Summary _parseSummary(Map<String, dynamic> props) {
   var priceProps = props["price"];
-  if (priceProps == null || priceProps is! Map<String, dynamic>) {
-    throw unexpectedResponseFormat;
+  if (priceProps is! Map<String, dynamic>) {
+    throw _buildExceptionWrongFieldType(
+      "price",
+      "Map<String, dynamic>",
+      priceProps,
+    );
   }
 
   var changeProps = priceProps["change"];
-  if (changeProps == null || changeProps is! Map<String, dynamic>) {
-    throw unexpectedResponseFormat;
+  if (changeProps is! Map<String, dynamic>) {
+    throw _buildExceptionWrongFieldType(
+      "change",
+      "Map<String, dynamic>",
+      changeProps,
+    );
   }
 
   var last = priceProps["last"];
-  if (last == null || last is! num) {
-    throw unexpectedResponseFormat;
+  if (last is! num) {
+    throw _buildExceptionWrongFieldType("last", "num", last);
   }
 
   var high = priceProps["high"];
-  if (high == null || high is! num) {
-    throw unexpectedResponseFormat;
+  if (high is! num) {
+    throw _buildExceptionWrongFieldType("high", "num", high);
   }
 
   var low = priceProps["low"];
-  if (low == null || low is! num) {
-    throw unexpectedResponseFormat;
+  if (low is! num) {
+    throw _buildExceptionWrongFieldType("low", "num", low);
   }
 
   var changeAbs = changeProps["absolute"];
-  if (changeAbs == null || changeAbs is! num) {
-    throw unexpectedResponseFormat;
+  if (changeAbs is! num) {
+    throw _buildExceptionWrongFieldType("absolute", "num", changeAbs);
   }
 
   var changePerc = changeProps["percentage"];
-  if (changePerc == null || changePerc is! num) {
-    throw unexpectedResponseFormat;
+  if (changePerc is! num) {
+    throw _buildExceptionWrongFieldType("percentage", "num", changePerc);
   }
 
   var volBase = props["volume"];
-  if (volBase == null || volBase is! num) {
-    throw unexpectedResponseFormat;
+  if (volBase is! num) {
+    throw _buildExceptionWrongFieldType("volume", "num", volBase);
   }
 
   var volQuote = props["volumeQuote"];
-  if (volQuote == null || volQuote is! num) {
-    throw unexpectedResponseFormat;
+  if (volQuote is! num) {
+    throw _buildExceptionWrongFieldType("volumeQuote", "num", volQuote);
   }
 
   return common.Summary()
@@ -213,22 +274,45 @@ common.Summary _parseSummary(Map<String, dynamic> props) {
 
 common.PublicTrade _parsePublicTrade(Iterable props) {
   if (props.length < 4) {
-    throw unexpectedResponseFormat;
+    throw UnexpectedResponseFormatException(
+      "expected trade array to have at least 4 elements, got ${props}",
+    );
   }
 
-  return new common.PublicTrade()
-    ..id = props.elementAt(0)
-    ..timestamp = props.elementAt(1)
-    ..price = props.elementAt(2)
-    ..amount = props.elementAt(3);
+  var id = props.elementAt(1);
+  if (id is! int) {
+    throw _buildExceptionWrongIndexType(0, "int", id);
+  }
+
+  var timestamp = props.elementAt(1);
+  if (timestamp is! int) {
+    throw _buildExceptionWrongIndexType(1, "int", timestamp);
+  }
+
+  var price = props.elementAt(2);
+  if (price is! num) {
+    throw _buildExceptionWrongIndexType(2, "num", price);
+  }
+
+  var amount = props.elementAt(3);
+  if (amount is! num) {
+    throw _buildExceptionWrongIndexType(3, "num", amount);
+  }
+
+  return common.PublicTrade()
+    ..id = id
+    ..timestamp = timestamp
+    ..price = price
+    ..amount = amount;
 }
 
 Iterable<common.PublicTrade> _parsePublicTrades(Iterable props) {
   var trades = new List<common.PublicTrade>();
 
-  for (var p in props) {
+  for (var i = 0; i < props.length; i++) {
+    var p = props.elementAt(i);
     if (p is! Iterable) {
-      throw unexpectedResponseFormat;
+      throw _buildExceptionWrongIndexType(i, "Iterable", p);
     }
 
     var trade = _parsePublicTrade(p);
@@ -236,14 +320,4 @@ Iterable<common.PublicTrade> _parsePublicTrades(Iterable props) {
   }
 
   return trades;
-}
-
-UnexpectedResponseFormatException _buildException(
-  String wantField,
-  String wantType,
-  got,
-) {
-  return UnexpectedResponseFormatException(
-    "expected ${wantType} field ${wantField}, instead got ${got.runtimeType}(${got})",
-  );
 }
