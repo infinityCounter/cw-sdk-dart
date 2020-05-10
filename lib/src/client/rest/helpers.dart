@@ -2,7 +2,7 @@ part of rest;
 
 common.Asset _parseAsset(Map<String, dynamic> props) {
   var id = props["id"];
-  if (id is! String) {
+  if (id is! int) {
     throw _buildExceptionWrongFieldType("id", "int", id);
   }
 
