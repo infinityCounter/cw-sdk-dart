@@ -13,8 +13,8 @@ class OrderBookSnapshot {
   }
 
   toString() {
-    var asksJson = convert.jsonEncode(this.asks);
-    var bidsJson = convert.jsonEncode(this.bids);
+    var asksJson = _publicOrdersToJson(this.asks);
+    var bidsJson = _publicOrdersToJson(this.bids);
 
     return "OrderBookSnapshot(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }
@@ -46,8 +46,8 @@ class OrderBookDelta {
   }
 
   toString() {
-    var asksJson = convert.jsonEncode(this.setAsks);
-    var bidsJson = convert.jsonEncode(this.setBids);
+    var asksJson = _publicOrdersToJson(this.setAsks);
+    var bidsJson = _publicOrdersToJson(this.setBids);
 
     var props = [
       "setAsks=${asksJson}",
@@ -179,8 +179,8 @@ class OrderBook {
   }
 
   toString() {
-    var asksJson = convert.jsonEncode(this.asks);
-    var bidsJson = convert.jsonEncode(this.bids);
+    var asksJson = _publicOrdersToJson(this.asks);
+    var bidsJson = _publicOrdersToJson(this.bids);
 
     return "OrderBook(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }

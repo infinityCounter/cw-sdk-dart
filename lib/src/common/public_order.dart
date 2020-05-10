@@ -33,6 +33,10 @@ class PublicOrder {
   toString() {
     return "PublicOrder(price=${this.price}, amount=${this.amount})";
   }
+
+  List<num> _toJson() {
+    return [this.price, this.amount];
+  }
 }
 
 sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
@@ -75,4 +79,12 @@ Iterable<PublicOrder> aggregatePublicOrders(
   }
 
   return aggOrders.values;
+}
+
+List<List<num>> _publicOrdersToJson(Iterable<PublicOrder> orders) {
+  var res = List<List<num>>();
+  for (var o in orders) {
+    res.add(o._toJson());
+  }
+  return res;
 }
