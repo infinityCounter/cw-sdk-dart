@@ -6,8 +6,8 @@ import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk
     show RestApiClient, OrderBook;
 
 main() {
-  var apiClient = new sdk.RestApiClient();
-  var futures = new List<Future>();
+  var apiClient = sdk.RestApiClient();
+  var futures = List<Future>();
 
   futures.add(apiClient.fetchAssets());
   futures.add(apiClient.fetchPairs());
@@ -46,7 +46,7 @@ main() {
     var bitfinex = results[7];
     var bitfinexBtcUsd = results[8];
     var snapshot = results[9];
-    var book = new sdk.OrderBook.fromSnapshot(snapshot);
+    var book = sdk.OrderBook.fromSnapshot(snapshot);
     var candles = results[10];
     var summary = results[11];
     var price = results[12];

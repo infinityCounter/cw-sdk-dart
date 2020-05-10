@@ -44,7 +44,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest("assets");
       return respFuture.then((respBody) {
         var unparsedAssetList = _getResultAsIterable(respBody);
-        var assetList = new List<common.Asset>();
+        var assetList = List<common.Asset>();
 
         for (var unparsedAsset in unparsedAssetList) {
           assetList.add(_parseAsset(unparsedAsset));
@@ -76,7 +76,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest("pairs");
       return respFuture.then((respBody) {
         var unparsedPairList = _getResultAsIterable(respBody);
-        var pairList = new List<common.Pair>();
+        var pairList = List<common.Pair>();
 
         for (var unparsedPair in unparsedPairList) {
           pairList.add(_parsePair(unparsedPair));
@@ -108,7 +108,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest("exchanges");
       return respFuture.then((respBody) {
         var unparsedExchangeList = _getResultAsIterable(respBody);
-        var exchangeList = new List<common.Exchange>();
+        var exchangeList = List<common.Exchange>();
 
         for (var unparsedExchange in unparsedExchangeList) {
           exchangeList.add(_parseExchange(unparsedExchange));
@@ -149,7 +149,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
       return respFuture.then((respBody) {
         var unparsedMarketList = _getResultAsIterable(respBody);
-        var marketList = new List<common.Market>();
+        var marketList = List<common.Market>();
 
         for (var unparsedMarket in unparsedMarketList) {
           marketList.add(_parseMarket(unparsedMarket));
@@ -214,7 +214,7 @@ class RestApiClient {
     int after,
   }) {
     var ret = Future(() {
-      var params = new Map<String, String>();
+      var params = Map<String, String>();
 
       if (periods != null && periods.length > 0) {
         params["periods"] = periods.join(",");
@@ -236,7 +236,7 @@ class RestApiClient {
 
       return respFuture.then((respBody) {
         var unparsedCandles = _getResultAsMap(respBody);
-        var periodCandles = new Map<String, Iterable<common.Candle>>();
+        var periodCandles = Map<String, Iterable<common.Candle>>();
 
         unparsedCandles.entries.forEach((entry) {
           periodCandles[entry.key] = _parseCandles(entry.value);
@@ -307,7 +307,7 @@ class RestApiClient {
     int limit,
   }) {
     var ret = Future(() {
-      var params = new Map<String, String>();
+      var params = Map<String, String>();
 
       if (since != null) {
         params["since"] = since.toString();

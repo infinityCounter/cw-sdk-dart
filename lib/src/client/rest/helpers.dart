@@ -132,7 +132,7 @@ common.PublicOrder _parsePublicOrder(Iterable props) {
 }
 
 Iterable<common.PublicOrder> _parsePublicOrders(Iterable unparsedOrders) {
-  var orders = new List<common.PublicOrder>();
+  var orders = List<common.PublicOrder>();
   for (var unparsedOrder in unparsedOrders) {
     orders.add(_parsePublicOrder(unparsedOrder));
   }
@@ -193,7 +193,7 @@ common.Candle _parseCandle(Iterable props) {
 }
 
 Iterable<common.Candle> _parseCandles(Iterable props) {
-  var candles = new List<common.Candle>();
+  var candles = List<common.Candle>();
 
   for (var i = 0; i < props.length; i++) {
     var p = props.elementAt(i);
@@ -307,7 +307,7 @@ common.PublicTrade _parsePublicTrade(Iterable props) {
 }
 
 Iterable<common.PublicTrade> _parsePublicTrades(Iterable props) {
-  var trades = new List<common.PublicTrade>();
+  var trades = List<common.PublicTrade>();
 
   for (var i = 0; i < props.length; i++) {
     var p = props.elementAt(i);

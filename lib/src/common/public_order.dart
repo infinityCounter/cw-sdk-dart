@@ -15,7 +15,7 @@ class PublicOrder {
       throw "incompatible operands, orders must have same price but ${this.price} != ${o.price}";
     }
 
-    return new PublicOrder(this.price, this.amount + o.amount);
+    return PublicOrder(this.price, this.amount + o.amount);
   }
 
   /// Decrements the amount of an order.
@@ -27,7 +27,7 @@ class PublicOrder {
       throw "incompatible operands, orders must have same price but ${this.price} != ${o.price}";
     }
 
-    return new PublicOrder(this.price, this.amount - o.amount);
+    return PublicOrder(this.price, this.amount - o.amount);
   }
 
   toString() {
@@ -49,7 +49,7 @@ sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
 
 Iterable<PublicOrder> aggregatePublicOrders(
     Iterable<PublicOrder> orders, num aggLevel) {
-  var aggOrders = new Map<num, PublicOrder>();
+  var aggOrders = Map<num, PublicOrder>();
   for (var o in orders) {
     var absPrice = o.price.abs();
     var remainder = absPrice % aggLevel;

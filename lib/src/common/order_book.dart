@@ -3,8 +3,8 @@ part of common;
 class OrderBookSnapshot {
   final int seqNum;
 
-  final asks = new List<PublicOrder>();
-  final bids = new List<PublicOrder>();
+  final asks = List<PublicOrder>();
+  final bids = List<PublicOrder>();
 
   OrderBookSnapshot(Iterable<PublicOrder> asks, Iterable<PublicOrder> bids,
       [this.seqNum = 0]) {
@@ -20,11 +20,11 @@ class OrderBookSnapshot {
 class OrderBookDelta {
   final int seqNum;
 
-  final setAsks = new List<PublicOrder>();
-  final setBids = new List<PublicOrder>();
+  final setAsks = List<PublicOrder>();
+  final setBids = List<PublicOrder>();
 
-  final removeAskPriceLevels = new List<num>();
-  final reomveBidPriceLevels = new List<num>();
+  final removeAskPriceLevels = List<num>();
+  final reomveBidPriceLevels = List<num>();
 
   OrderBookDelta(Iterable<PublicOrder> setAsks, Iterable<PublicOrder> setBids,
       Iterable<num> removeAskPriceLevels, Iterable<num> removeBidPriceLevels,
@@ -43,8 +43,8 @@ class OrderBook {
   int seqNum = 0;
 
   // Internal maps are keyed by price.
-  var _asks = new Map<num, PublicOrder>();
-  var _bids = new Map<num, PublicOrder>();
+  var _asks = Map<num, PublicOrder>();
+  var _bids = Map<num, PublicOrder>();
 
   OrderBook(Iterable<PublicOrder> asks, Iterable<PublicOrder> bids,
       [int seqNum = 0]) {
