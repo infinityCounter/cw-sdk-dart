@@ -1,7 +1,7 @@
 part of common;
 
 class OrderBookSnapshot {
-  final num seqNum;
+  final int seqNum;
 
   final asks = new List<PublicOrder>();
   final bids = new List<PublicOrder>();
@@ -18,7 +18,7 @@ class OrderBookSnapshot {
 }
 
 class OrderBookDelta {
-  final num seqNum;
+  final int seqNum;
 
   final setAsks = new List<PublicOrder>();
   final setBids = new List<PublicOrder>();
@@ -40,14 +40,14 @@ class OrderBookDelta {
 }
 
 class OrderBook {
-  num seqNum = 0;
+  int seqNum = 0;
 
   // Internal maps are keyed by price.
   var _asks = new Map<num, PublicOrder>();
   var _bids = new Map<num, PublicOrder>();
 
   OrderBook(Iterable<PublicOrder> asks, Iterable<PublicOrder> bids,
-      [num seqNum = 0]) {
+      [int seqNum = 0]) {
     this.asks = asks;
     this.bids = bids;
     this.seqNum = seqNum;
