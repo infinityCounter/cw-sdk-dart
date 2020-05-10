@@ -40,7 +40,7 @@ common.Pair _parsePair(Map<String, dynamic> props) {
   }
 
   var futuresContractPeriod = props["futuresContractPeriod"];
-  if (symbol is! String) {
+  if (futuresContractPeriod != null && futuresContractPeriod is! String) {
     throw _buildExceptionWrongFieldType(
         "futuresContractPeriod", "String", futuresContractPeriod);
   }
