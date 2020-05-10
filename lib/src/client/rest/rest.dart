@@ -12,8 +12,6 @@ part 'exceptions.dart';
 // defaultApiDomain is the current (as of May 1, 2020) production domain for Cryptowatch's REST API.
 const defaultApiDomain = "api.cryptowat.ch";
 
-const unexpectedResponseFormat = "Unexpected format for response";
-
 const _apiKeyHeader = "X-CW-API-Key";
 
 var httpClient = http.Client();
@@ -45,16 +43,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedAssetList = unpacked["result"];
-        if (unparsedAssetList is! Iterable) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedAssetList = _getResultAsIterable(respBody);
         var assetList = new List<common.Asset>();
 
         for (var unparsedAsset in unparsedAssetList) {
@@ -73,16 +62,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedAsset = unpacked["result"];
-        if (unparsedAsset is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedAsset = _getResultAsMap(respBody);
         return _parseAsset(unparsedAsset);
       });
     });
@@ -95,16 +75,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedPairList = unpacked["result"];
-        if (unparsedPairList is! Iterable) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedPairList = _getResultAsIterable(respBody);
         var pairList = new List<common.Pair>();
 
         for (var unparsedPair in unparsedPairList) {
@@ -123,16 +94,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedPair = unpacked["result"];
-        if (unparsedPair is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedPair = _getResultAsMap(respBody);
         return _parsePair(unparsedPair);
       });
     });
@@ -145,16 +107,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("exchanges");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedExchangeList = unpacked["result"];
-        if (unparsedExchangeList is! Iterable) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedExchangeList = _getResultAsIterable(respBody);
         var exchangeList = new List<common.Exchange>();
 
         for (var unparsedExchange in unparsedExchangeList) {
@@ -174,16 +127,7 @@ class RestApiClient {
       var respFuture =
           this._doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedExchange = unpacked["result"];
-        if (unparsedExchange is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedExchange = _getResultAsMap(respBody);
         return _parseExchange(unparsedExchange);
       });
     });
@@ -204,16 +148,7 @@ class RestApiClient {
 
       var respFuture = this._doApiRequest(path);
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedMarketList = unpacked["result"];
-        if (unparsedMarketList is! Iterable) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedMarketList = _getResultAsIterable(respBody);
         var marketList = new List<common.Market>();
 
         for (var unparsedMarket in unparsedMarketList) {
@@ -236,16 +171,7 @@ class RestApiClient {
 
       var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedMarket = unpacked["result"];
-        if (unparsedMarket is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedMarket = _getResultAsMap(respBody);
         return _parseMarket(unparsedMarket);
       });
     });
@@ -265,16 +191,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedSnapshot = unpacked["result"];
-        if (unparsedSnapshot is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedSnapshot = _getResultAsMap(respBody);
         return _parseOrderBookSnapshot(unparsedSnapshot);
       });
     });
@@ -318,16 +235,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        Map<String, dynamic> unparsedCandles = unpacked["result"];
-        if (unparsedCandles is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedCandles = _getResultAsMap(respBody);
         var periodCandles = new Map<String, Iterable<common.Candle>>();
 
         unparsedCandles.entries.forEach((entry) {
@@ -352,16 +260,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedSummary = unpacked["result"];
-        if (unparsedSummary is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedSummary = _getResultAsMap(respBody);
         return _parseSummary(unparsedSummary);
       });
     });
@@ -380,19 +279,11 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedPrice = unpacked["result"];
-        if (unparsedPrice is! Map) {
-          throw unexpectedResponseFormat;
-        }
+        var unparsedPrice = _getResultAsMap(respBody);
 
         var price = unparsedPrice["price"];
-        if (price == null || price is! num) {
-          throw unexpectedResponseFormat;
+        if (price is! num) {
+          throw _buildExceptionWrongFieldType("price", "num", price);
         }
 
         num priceAsNum = price;
@@ -433,20 +324,47 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((respBody) {
-        var unpacked = convert.jsonDecode(respBody);
-        if (unpacked is! Map) {
-          throw unexpectedResponseFormat;
-        }
-
-        var unparsedTrades = unpacked["result"];
-        if (unparsedTrades is! Iterable) {
-          throw unexpectedResponseFormat;
-        }
-
+        var unparsedTrades = _getResultAsIterable(respBody);
         return _parsePublicTrades(unparsedTrades);
       });
     });
 
     return ret;
   }
+}
+
+Map<String, dynamic> _getResultAsMap(String respBody) {
+  var unpacked = convert.jsonDecode(respBody);
+  if (unpacked is! Map<String, dynamic>) {
+    throw _buildResponseBodyNotMapException(unpacked);
+  }
+
+  var unparsedResult = unpacked["result"];
+  if (unparsedResult is! Map<String, dynamic>) {
+    throw _buildExceptionWrongFieldType(
+      "result",
+      "Map<String, dynamic>",
+      unparsedResult,
+    );
+  }
+
+  return unparsedResult;
+}
+
+Iterable _getResultAsIterable(String respBody) {
+  var unpacked = convert.jsonDecode(respBody);
+  if (unpacked is! Map<String, dynamic>) {
+    throw _buildResponseBodyNotMapException(unpacked);
+  }
+
+  var unparsedResult = unpacked["result"];
+  if (unparsedResult is! Iterable) {
+    throw _buildExceptionWrongFieldType(
+      "result",
+      "Iterable",
+      unparsedResult,
+    );
+  }
+
+  return unparsedResult;
 }
