@@ -3,3 +3,4 @@ description: An open source sdk built on top of Cryptowatch's API.
 author: Emile Keith <emilekeith3.0@gmail.com>
 dependencies:
   http: ^0.12.1
+  test: ^1.14.3
