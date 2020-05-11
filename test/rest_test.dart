@@ -3,15 +3,13 @@ library cw_sdk_dart_test;
 import 'dart:convert' as convert;
 import 'dart:mirrors' as mirrors;
 
-import 'package:test/test.dart' as test;
+import 'package:test/test.dart' as testing;
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart' as httpTesting;
 
 import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk;
 
 part 'test_case.dart';
-
-const _thisLibName = "cw_sdk_dart_test";
 
 main() {
   const apiDomain = "test-api.cryptowat.ch";
@@ -25,19 +23,71 @@ main() {
     apiKey: apiKey,
   );
 
-  var clients = [
-    anonApiClient,
-    altDomainApiClient,
-    authenticatedApiClient,
-    fullyConfiguredApiClient,
+  var clientReflections = [
+    mirrors.reflect(anonApiClient),
+    // mirrors.reflect(altDomainApiClient),
+    // mirrors.reflect(authenticatedApiClient),
+    // mirrors.reflect(fullyConfiguredApiClient),
   ];
 
+  var testFuncIMs = _getAllTestFuncInstanceMirrors();
+  var testSetsToRun = List<restApiClientTestSet>();
+
+  for (var tf in testFuncIMs) {
+    testSetsToRun.add(tf.reflectee());
+  }
+
+  for (var tset in testSetsToRun) {
+    testing.group(tset.testName, () {
+      var methodSym = mirrors.MirrorSystem.getSymbol(tset.methodName);
+
+      for (var tc in tset.cases) {
+        testing.test(tc.descr, () {
+          for (var clientRef in clientReflections) {
+            Map<Symbol, dynamic> namedArgs;
+
+            if (tc.namedArgs != null) {
+              tc.namedArgs.map((k, v) {
+                var kSym = mirrors.MirrorSystem.getSymbol(k);
+                return MapEntry(kSym, v);
+              });
+            }
+
+            clientRef.invoke(methodSym, tc.posArgs, namedArgs);
+          }
+        });
+      }
+    });
+  }
+}
+
+restApiClientTestSet f1() {
+  var testSet = restApiClientTestSet()
+    ..testName = "Assets"
+    ..methodName = "fetchAsset"
+    ..cases = [
+      restApiClientTestCase()..posArgs = ["btc"]
+    ];
+
+  return testSet;
+}
+
+restApiClientTestSet _f2() {
+  return restApiClientTestSet();
+}
+
+restApiClientTestSet _f3() {
+  return restApiClientTestSet();
+}
+
+List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
+  var testFuncIMs = List<mirrors.InstanceMirror>();
+
   var ms = mirrors.currentMirrorSystem();
-  var retMir = mirrors.reflectClass(restApiClientTestCase);
+  var retMir = mirrors.reflectClass(restApiClientTestSet);
 
   // Reflect this library itself
-  var thisLibSymbol = mirrors.MirrorSystem.getSymbol(_thisLibName);
-  var thisLib = ms.findLibrary(thisLibSymbol);
+  var thisLib = ms.isolate.rootLibrary;
 
   thisLib.declarations.forEach((k, decMir) {
     if (decMir is! mirrors.MethodMirror) {
@@ -46,17 +96,15 @@ main() {
 
     mirrors.MethodMirror methodMir = decMir;
     String methodName = mirrors.MirrorSystem.getName(k);
-    if (methodName == "main") {
+
+    if (methodMir.isPrivate || methodMir.returnType != retMir) {
       return;
     }
 
-    print(methodName);
-    print(methodMir.returnType);
+    var testFuncIM = thisLib.getField(decMir.simpleName);
 
-    print(methodMir.returnType == retMir);
+    testFuncIMs.add(testFuncIM);
   });
-}
 
-restApiClientTestCase f1() {
-  return restApiClientTestCase();
+  return testFuncIMs;
 }

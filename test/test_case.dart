@@ -1,7 +1,8 @@
 part of cw_sdk_dart_test;
 
 class restApiClientTestCase {
-  String methodName;
+  String descr;
+
   List posArgs;
   Map<String, dynamic> namedArgs;
 
@@ -9,4 +10,11 @@ class restApiClientTestCase {
 
   var wantRes;
   var wantException;
+}
+
+class restApiClientTestSet {
+  String testName;
+  String methodName;
+
+  List<restApiClientTestCase> cases = [];
 }
