@@ -14,28 +14,36 @@ const defaultApiDomain = "api.cryptowat.ch";
 
 const _apiKeyHeader = "X-CW-API-Key";
 
-var httpClient = http.Client();
-
 /// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
 ///
 /// The methods implemented by this class all return a Future object instead of the actual
 /// result. CW API docs available at: https://docs.cryptowat.ch/rest-api/
 class RestApiClient {
+  http.Client _httpClient;
+
   final String _apiDomain;
   final String _apiKey;
 
-  RestApiClient({String apiDomain: defaultApiDomain, String apiKey: ""})
-      : this._apiDomain = apiDomain,
-        this._apiKey = apiKey {}
+  RestApiClient({
+    http.Client httpClient,
+    String apiDomain: defaultApiDomain,
+    String apiKey: "",
+  })  : this._apiDomain = apiDomain,
+        this._apiKey = apiKey {
+    httpClient ??= http.Client();
+    this._httpClient = httpClient;
+  }
 
   Future<String> _doApiRequest(String path, [Map<String, String> params]) {
     var endpoint = Uri.https(this._apiDomain, path, params);
 
     if (this._apiKey is String && this._apiKey != "") {
-      return http.read(endpoint, headers: {_apiKeyHeader: this._apiKey});
+      return this
+          ._httpClient
+          .read(endpoint, headers: {_apiKeyHeader: this._apiKey});
     }
 
-    return http.read(endpoint);
+    return this._httpClient.read(endpoint);
   }
 
   /// Returns a Future that resolves to an iterable collection of all assets.
