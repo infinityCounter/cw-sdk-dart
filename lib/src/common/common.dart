@@ -2,6 +2,8 @@ library common;
 
 import 'dart:convert' as convert show jsonEncode;
 
+import 'package:quiver/core.dart' as quiver show hash4;
+
 part 'exceptions.dart';
 part 'asset.dart';
 part 'pair.dart';
