@@ -1,5 +1,7 @@
 part of rest;
 
+/// UnexpectedResponseFormatException is thrown whenever the Cryptowatch REST API
+/// responds to a request with a body that the sdk is unable to parse.
 class UnexpectedResponseFormatException implements Exception {
   String reason = "";
 
@@ -8,6 +10,13 @@ class UnexpectedResponseFormatException implements Exception {
   toString() {
     return "Problem parsing API response; reason=${this.reason}";
   }
+
+  /// Returns true if the object being compared is also an instance of
+  /// UnexpectedResponseFormatException, and it has the same reason.
+  operator ==(e) =>
+      e is UnexpectedResponseFormatException && e.reason == this.reason;
+
+  get hashCode => this.reason.hashCode;
 }
 
 UnexpectedResponseFormatException _buildExceptionWrongFieldType(
@@ -34,4 +43,22 @@ UnexpectedResponseFormatException _buildResponseBodyNotMapException(got) {
   return UnexpectedResponseFormatException(
     "expected API response body to be of type Map<String, dynamic>, instead got ${got.runtimeType}(${got})",
   );
+}
+
+/// RateLimitException is thrown whenever the Cryptowatch REST API
+/// indicates that the client is making too many API requests.
+class RateLimitException implements Exception {
+  toString() {
+    return "Rate limited by Cryptowatch API";
+  }
+
+  // All instances of RateLimitException are equal to each other
+  // and return the same hashCode.
+
+  /// Returns true if the object being compared to is also an instance of
+  /// RateLimitException.
+  operator ==(e) => e is RateLimitException;
+
+  /// Always returns 0.
+  get hashCode => 0;
 }

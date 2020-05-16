@@ -12,15 +12,15 @@ class Asset {
     return "Asset(id=${this.id}, name='${this.name}', symbol='${this.symbol}', fiat=${this.fiat})";
   }
 
-  bool operator ==(otherAsset) {
-    if (otherAsset is! Asset) {
+  bool operator ==(a) {
+    if (a is! Asset) {
       return false;
     }
 
-    return this.id == otherAsset.id &&
-        this.name == otherAsset.name &&
-        this.symbol == otherAsset.symbol &&
-        this.fiat == otherAsset.fiat;
+    return this.id == a.id &&
+        this.name == a.name &&
+        this.symbol == a.symbol &&
+        this.fiat == a.fiat;
   }
 
   int get hashCode => quiver.hash4(this.id, this.name, this.symbol, this.fiat);

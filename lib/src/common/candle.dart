@@ -21,4 +21,24 @@ class Candle {
 
     return "Candle(${props.join(', ')})";
   }
+
+  operator ==(c) =>
+      c is Candle &&
+      c.open == this.open &&
+      c.high == this.high &&
+      c.low == this.low &&
+      c.close == this.close &&
+      c.volumeBase == this.volumeBase &&
+      c.volumeQuote == this.volumeQuote &&
+      c.timestamp == this.timestamp;
+
+  get hashCode => quiver.hashObjects([
+        this.open,
+        this.high,
+        this.low,
+        this.close,
+        this.volumeBase,
+        this.volumeQuote,
+        this.timestamp,
+      ]);
 }

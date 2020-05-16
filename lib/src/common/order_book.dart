@@ -18,6 +18,14 @@ class OrderBookSnapshot {
 
     return "OrderBookSnapshot(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }
+
+  operator ==(s) =>
+      s is OrderBookSnapshot &&
+      s.seqNum == this.seqNum &&
+      _listsAreEqual(s.asks, this.asks) &&
+      _listsAreEqual(s.bids, this.bids);
+
+  get hashCode => quiver.hash3(this.seqNum, this.asks, this.bids);
 }
 
 /// An OrderBookDelta represents a diff between 2 orderbook snapshots.
@@ -59,6 +67,22 @@ class OrderBookDelta {
 
     return "OrderBookDelta(${props})";
   }
+
+  operator ==(s) =>
+      s is OrderBookDelta &&
+      s.seqNum == this.seqNum &&
+      _listsAreEqual(s.setAsks, this.setAsks) &&
+      _listsAreEqual(s.setBids, this.setBids) &&
+      _listsAreEqual(s.removeAskPriceLevels, this.removeAskPriceLevels) &&
+      _listsAreEqual(s.removeBidPriceLevels, this.removeBidPriceLevels);
+
+  get hashCode => quiver.hashObjects([
+        this.seqNum,
+        this.setAsks,
+        this.setBids,
+        this.removeAskPriceLevels,
+        this.removeBidPriceLevels,
+      ]);
 }
 
 class OrderBook {
@@ -184,4 +208,22 @@ class OrderBook {
 
     return "OrderBook(asks=${asksJson}, bids=${bidsJson}, seqNum=${this.seqNum})";
   }
+
+  operator ==(s) {
+    if (s is OrderBook) {
+      return s.snapshot == this.snapshot;
+    } else if (s is OrderBookSnapshot) {
+      return s == this.snapshot;
+    }
+
+    return false;
+  }
+
+  get hashCode => quiver.hash3(this.seqNum, this._asks, this._bids);
+}
+
+const listEquality = collection.ListEquality();
+
+bool _listsAreEqual(List listA, List listB) {
+  return listEquality.equals(listA, listB);
 }

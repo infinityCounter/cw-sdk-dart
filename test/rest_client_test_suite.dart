@@ -37,7 +37,7 @@ class restApiClientTestSuite {
     }
   }
 
-  static void _test_f1() {
+  static void _test_FetchAsset() {
     var btc = sdk.Asset()
       ..id = 60
       ..symbol = "btc"
@@ -45,10 +45,10 @@ class restApiClientTestSuite {
       ..fiat = false;
 
     var testSet = restApiClientTestSet()
-      ..testGroupName = "_test_f1"
+      ..testGroupName = "Test Fetch Assets"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching Bitcoin from API"
+          ..descr = "Fetching Bitcoin from API, full response" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
@@ -77,10 +77,10 @@ class restApiClientTestSuite {
                     "pair":"xrpbtc-perpetual-futures",
                     "active":true,
                     "route":"https://api.cryptowat.ch/markets/kraken-futures/xrpbtc-perpetual-futures"
-                    }
-                  ]
-                }
-              },
+                  }
+                ]
+              }
+            },
             "allowance":{
               "cost":1117794,
               "remaining": 3998882206,
@@ -90,7 +90,27 @@ class restApiClientTestSuite {
           }
           '''
           ..respStatusCode = 200
+          ..wantRes = btc,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Bitcoin from API, just the essentials" // {{{
+          ..methodName = "fetchAsset"
+          ..posArgs = ["btc"]
+          ..setDomain = _testApiDomain
+          ..wantUrl = "https://${_testApiDomain}/assets/btc"
+          ..respJson = '''
+          {
+            "result": {
+              "id":60,
+              "symbol":"btc",
+              "name":"Bitcoin",
+              "fiat":false
+            }
+          }
+          '''
+          ..respStatusCode = 200
           ..wantRes = btc
+        // }}}
       ];
 
     return _runRestApiClientTestSet(testSet);

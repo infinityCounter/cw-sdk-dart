@@ -37,6 +37,11 @@ class PublicOrder {
   List<num> _toJson() {
     return [this.price, this.amount];
   }
+
+  operator ==(po) =>
+      po is PublicOrder && po.price == this.price && po.amount == this.amount;
+
+  get hashCode => quiver.hash2(this.price, this.amount);
 }
 
 sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {

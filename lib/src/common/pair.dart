@@ -25,4 +25,20 @@ class Pair {
 
     return "Pair(${props.join(', ')})";
   }
+
+  operator ==(p) =>
+      p is Pair &&
+      p.id == this.id &&
+      p.base == this.base &&
+      p.quote == this.quote &&
+      p.symbol == this.symbol &&
+      p.futuresContractPeriod == this.futuresContractPeriod;
+
+  get hashCode => quiver.hashObjects([
+        this.id,
+        this.base,
+        this.quote,
+        this.symbol,
+        this.futuresContractPeriod,
+      ]);
 }

@@ -36,14 +36,21 @@ class RestApiClient {
 
   Future<String> _doApiRequest(String path, [Map<String, String> params]) {
     var endpoint = Uri.https(this._apiDomain, path, params);
+    var headers = Map<String, String>();
 
     if (this._apiKey is String && this._apiKey != "") {
-      return this
-          ._httpClient
-          .read(endpoint, headers: {_apiKeyHeader: this._apiKey});
+      headers[_apiKeyHeader] = this._apiKey;
     }
 
-    return this._httpClient.read(endpoint);
+    return this._httpClient.get(endpoint, headers: headers).then((resp) {
+      // Cryptowatch uses status code 429 when clients have exceeded their
+      // allotted usage. https://docs.cryptowat.ch/rest-api/rate-limit
+      if (resp.statusCode == 429) {
+        throw RateLimitException;
+      }
+
+      return resp.body;
+    });
   }
 
   /// Returns a Future that resolves to an iterable collection of all assets.

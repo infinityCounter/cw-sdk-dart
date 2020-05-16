@@ -2,7 +2,9 @@ library common;
 
 import 'dart:convert' as convert show jsonEncode;
 
-import 'package:quiver/core.dart' as quiver show hash4;
+import 'package:quiver/core.dart' as quiver
+    show hash2, hash3, hash4, hashObjects;
+import 'package:collection/collection.dart' as collection show ListEquality;
 
 part 'exceptions.dart';
 part 'asset.dart';
