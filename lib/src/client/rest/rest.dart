@@ -2,7 +2,7 @@ library rest;
 
 import 'dart:convert' as convert show jsonDecode;
 
-import 'package:http/http.dart' as http show Client, read;
+import 'package:http/http.dart' as http show Client, Response;
 
 import '../../common/common.dart' as common;
 
@@ -34,7 +34,8 @@ class RestApiClient {
     this._httpClient = httpClient;
   }
 
-  Future<String> _doApiRequest(String path, [Map<String, String> params]) {
+  Future<http.Response> _doApiRequest(String path,
+      [Map<String, String> params]) {
     var endpoint = Uri.https(this._apiDomain, path, params);
     var headers = Map<String, String>();
 
@@ -47,9 +48,11 @@ class RestApiClient {
       // allotted usage. https://docs.cryptowat.ch/rest-api/rate-limit
       if (resp.statusCode == 429) {
         throw RateLimitException;
+      } else if (resp.statusCode > 500) {
+        throw RestServerException;
       }
 
-      return resp.body;
+      return resp;
     });
   }
 
@@ -57,8 +60,8 @@ class RestApiClient {
   Future<Iterable<common.Asset>> fetchAssets() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets");
-      return respFuture.then((respBody) {
-        var unparsedAssetList = _getResultAsIterable(respBody);
+      return respFuture.then((resp) {
+        var unparsedAssetList = _getResultAsIterable(resp.body);
         var assetList = List<common.Asset>();
 
         for (var unparsedAsset in unparsedAssetList) {
@@ -76,8 +79,12 @@ class RestApiClient {
   Future<common.Asset> fetchAsset(String sym) {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
-      return respFuture.then((respBody) {
-        var unparsedAsset = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedAsset = _getResultAsMap(resp.body);
         return _parseAsset(unparsedAsset);
       });
     });
@@ -89,8 +96,8 @@ class RestApiClient {
   Future<Iterable<common.Pair>> fetchPairs() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs");
-      return respFuture.then((respBody) {
-        var unparsedPairList = _getResultAsIterable(respBody);
+      return respFuture.then((resp) {
+        var unparsedPairList = _getResultAsIterable(resp.body);
         var pairList = List<common.Pair>();
 
         for (var unparsedPair in unparsedPairList) {
@@ -108,8 +115,12 @@ class RestApiClient {
   Future<common.Pair> fetchPair(String sym) {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
-      return respFuture.then((respBody) {
-        var unparsedPair = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedPair = _getResultAsMap(resp.body);
         return _parsePair(unparsedPair);
       });
     });
@@ -121,8 +132,8 @@ class RestApiClient {
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
       var respFuture = this._doApiRequest("exchanges");
-      return respFuture.then((respBody) {
-        var unparsedExchangeList = _getResultAsIterable(respBody);
+      return respFuture.then((resp) {
+        var unparsedExchangeList = _getResultAsIterable(resp.body);
         var exchangeList = List<common.Exchange>();
 
         for (var unparsedExchange in unparsedExchangeList) {
@@ -141,8 +152,12 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture =
           this._doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
-      return respFuture.then((respBody) {
-        var unparsedExchange = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedExchange = _getResultAsMap(resp.body);
         return _parseExchange(unparsedExchange);
       });
     });
@@ -162,8 +177,8 @@ class RestApiClient {
       }
 
       var respFuture = this._doApiRequest(path);
-      return respFuture.then((respBody) {
-        var unparsedMarketList = _getResultAsIterable(respBody);
+      return respFuture.then((resp) {
+        var unparsedMarketList = _getResultAsIterable(resp.body);
         var marketList = List<common.Market>();
 
         for (var unparsedMarket in unparsedMarketList) {
@@ -185,8 +200,12 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
-      return respFuture.then((respBody) {
-        var unparsedMarket = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedMarket = _getResultAsMap(resp.body);
         return _parseMarket(unparsedMarket);
       });
     });
@@ -205,8 +224,12 @@ class RestApiClient {
       var path = "markets/${exchangeSym}/${pairSym}/orderbook";
       var respFuture = this._doApiRequest(path);
 
-      return respFuture.then((respBody) {
-        var unparsedSnapshot = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedSnapshot = _getResultAsMap(resp.body);
         return _parseOrderBookSnapshot(unparsedSnapshot);
       });
     });
@@ -249,8 +272,12 @@ class RestApiClient {
       var path = "markets/${exchangeSym}/${pairSym}/ohlc";
       var respFuture = this._doApiRequest(path, params);
 
-      return respFuture.then((respBody) {
-        var unparsedCandles = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedCandles = _getResultAsMap(resp.body);
         var periodCandles = Map<String, Iterable<common.Candle>>();
 
         unparsedCandles.entries.forEach((entry) {
@@ -274,8 +301,12 @@ class RestApiClient {
       var path = "markets/${exchangeSym}/${pairSym}/summary";
       var respFuture = this._doApiRequest(path);
 
-      return respFuture.then((respBody) {
-        var unparsedSummary = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedSummary = _getResultAsMap(resp.body);
         return _parseSummary(unparsedSummary);
       });
     });
@@ -293,8 +324,12 @@ class RestApiClient {
       var path = "markets/${exchangeSym}/${pairSym}/price";
       var respFuture = this._doApiRequest(path);
 
-      return respFuture.then((respBody) {
-        var unparsedPrice = _getResultAsMap(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedPrice = _getResultAsMap(resp.body);
 
         var price = unparsedPrice["price"];
         if (price is! num) {
@@ -338,8 +373,12 @@ class RestApiClient {
       var path = "markets/${exchangeSym}/${pairSym}/trades";
       var respFuture = this._doApiRequest(path, params);
 
-      return respFuture.then((respBody) {
-        var unparsedTrades = _getResultAsIterable(respBody);
+      return respFuture.then((resp) {
+        if (resp.statusCode == 404) {
+          return null;
+        }
+
+        var unparsedTrades = _getResultAsIterable(resp.body);
         return _parsePublicTrades(unparsedTrades);
       });
     });
