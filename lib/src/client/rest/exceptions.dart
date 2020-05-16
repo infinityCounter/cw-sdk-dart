@@ -59,6 +59,22 @@ class RateLimitException implements Exception {
   /// RateLimitException.
   operator ==(e) => e is RateLimitException;
 
-  /// Always returns 0.
-  get hashCode => 0;
+  get hashCode => toString().hashCode;
+}
+
+/// RestServerException is thrown whenever the Cryptowatch REST API
+/// returns a 500+ status code.
+class RestServerException implements Exception {
+  toString() {
+    return "Internal Server error returned by Cryptowatch API";
+  }
+
+  // All instances of RestServerException are equal to each other
+  // and return the same hashCode.
+
+  /// Returns true if the object being compared to is also an instance of
+  /// RestServerException.
+  operator ==(e) => e is RestServerException;
+
+  get hashCode => toString().hashCode;
 }
