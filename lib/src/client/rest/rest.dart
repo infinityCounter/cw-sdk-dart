@@ -15,6 +15,10 @@ const defaultApiDomain = "api.cryptowat.ch";
 
 const _apiKeyHeader = "X-CW-API-Key";
 
+const _statusCodeNotFound = 404;
+const _statusCodeTooManyRequests = 429;
+const _statusCodeInternalServerError = 500;
+
 /// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
 ///
 /// The methods implemented by this class all return a Future object instead of the actual
@@ -49,9 +53,9 @@ class RestApiClient {
     return this._httpClient.get(endpoint, headers: headers).then((resp) {
       // Cryptowatch uses status code 429 when clients have exceeded their
       // allotted usage. https://docs.cryptowat.ch/rest-api/rate-limit
-      if (resp.statusCode == 429) {
+      if (resp.statusCode == _statusCodeTooManyRequests) {
         throw RateLimitException;
-      } else if (resp.statusCode > 500) {
+      } else if (resp.statusCode >= _statusCodeInternalServerError) {
         throw RestServerException;
       }
 
@@ -83,7 +87,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -119,7 +123,7 @@ class RestApiClient {
     var ret = Future(() {
       var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -156,7 +160,7 @@ class RestApiClient {
       var respFuture =
           this._doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -204,7 +208,7 @@ class RestApiClient {
 
       var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -228,7 +232,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -276,7 +280,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -305,7 +309,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -328,7 +332,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
@@ -377,7 +381,7 @@ class RestApiClient {
       var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((resp) {
-        if (resp.statusCode == 404) {
+        if (resp.statusCode == _statusCodeNotFound) {
           return null;
         }
 
