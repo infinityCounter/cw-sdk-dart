@@ -5,6 +5,7 @@ import 'dart:convert' as convert show jsonDecode;
 import 'package:http/http.dart' as http show Client, Response;
 
 import '../../common/common.dart' as common;
+import '../../version/version.dart' show version;
 
 part 'helpers.dart';
 part 'exceptions.dart';
@@ -37,7 +38,9 @@ class RestApiClient {
   Future<http.Response> _doApiRequest(String path,
       [Map<String, String> params]) {
     var endpoint = Uri.https(this._apiDomain, path, params);
-    var headers = Map<String, String>();
+    var headers = {
+      "User-Agent": "infinityCounter/cw-sdk-dart@${version}",
+    };
 
     if (this._apiKey is String && this._apiKey != "") {
       headers[_apiKeyHeader] = this._apiKey;
