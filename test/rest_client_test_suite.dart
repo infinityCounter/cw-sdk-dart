@@ -39,7 +39,7 @@ class restApiClientTestSuite {
     }
   }
 
-  static void _test_StatusCodeExceptions() {
+  static void _test_statusCodeExceptions() {
     var bitfinex = sdk.Exchange()
       ..id = 1
       ..name = "Bitfinex"
@@ -108,7 +108,7 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_FetchAssets() {
+  static void _test_fetchAssets() {
     var btc = sdk.Asset()
       ..id = 60
       ..symbol = "btc"
@@ -189,7 +189,7 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_FetchAsset() {
+  static void _test_fetchAsset() {
     var btc = sdk.Asset()
       ..id = 60
       ..symbol = "btc"
@@ -200,7 +200,7 @@ class restApiClientTestSuite {
       ..testGroupName = "Test fetchAsset"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching Bitcoin" // {{{
+          ..descr = "Fetching Asset, Ok" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
@@ -256,7 +256,7 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_FetchPairs() {
+  static void _test_fetchPairs() {
     var btc = sdk.Asset()
       ..id = 60
       ..symbol = "btc"
@@ -298,7 +298,7 @@ class restApiClientTestSuite {
       ..testGroupName = "Test fetchPairs"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching pairs" // {{{
+          ..descr = "Fetching pairs, Ok" // {{{
           ..methodName = "fetchPairs"
           ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
@@ -388,7 +388,7 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_FetchPair() {
+  static void _test_fetchPair() {
     var btc = sdk.Asset()
       ..id = 60
       ..symbol = "btc"
@@ -418,7 +418,7 @@ class restApiClientTestSuite {
       ..testGroupName = "Test fetchPair"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching spot pair" // {{{
+          ..descr = "Fetching spot pair, Ok" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd"]
           ..setDomain = _testApiDomain
@@ -446,7 +446,7 @@ class restApiClientTestSuite {
           ..wantRes = btcusd,
         // }}}
         restApiClientTestCase()
-          ..descr = "Fetching futures pair" // {{{
+          ..descr = "Fetching futures pair, Ok" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd-perpetual-futures"]
           ..setDomain = _testApiDomain
@@ -548,7 +548,7 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_FetchPairVwap() {
+  static void _test_fetchPairVwap() {
     var testSet = restApiClientTestSet()
       ..testGroupName = "Test fetchPairVwap"
       ..cases = [
@@ -582,6 +582,88 @@ class restApiClientTestSuite {
             "expected num field vwap, instead got String(NaN)",
           ),
         // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchExchanges() {
+    var bitfinex = sdk.Exchange()
+      ..id = 1
+      ..name = "Bitfinex"
+      ..symbol = "bitfinex"
+      ..active = true;
+
+    var kraken = sdk.Exchange()
+      ..id = 4
+      ..name = "Kraken"
+      ..symbol = "kraken"
+      ..active = true;
+
+    var quadriga = sdk.Exchange()
+      ..id = 26
+      ..name = "QuadrigaCX"
+      ..symbol = "quadriga"
+      ..active = false;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchExchanges"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching exchanges, Ok" // {{{
+          ..methodName = "fetchExchanges"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges"
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 1,
+              "symbol": "bitfinex",
+              "name": "Bitfinex",
+              "active": true
+            },{
+              "id": 4,
+              "symbol": "kraken",
+              "name": "Kraken",
+              "active": true
+            },{
+              "id": 26,
+              "symbol": "quadriga",
+              "name": "QuadrigaCX",
+              "active": false
+            }]
+          }
+          '''
+          ..wantRes = [bitfinex, kraken, quadriga],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Empty list of results" // {{{
+          ..methodName = "fetchExchanges"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges"
+          ..respJson = '{"result": []}'
+          ..wantRes = <sdk.Exchange>[],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (active field is int)" // {{{
+          ..methodName = "fetchExchanges"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges"
+
+          // FetchPairs is expecting an array, not an object
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 1,
+              "symbol": "bitfinex",
+              "name": "Bitfinex",
+              "active": 42
+            }]
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected bool field active, instead got int(42)",
+          )
       ];
 
     _runRestApiClientTestSet(testSet);
