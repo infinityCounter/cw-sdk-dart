@@ -87,7 +87,7 @@ class restApiClientTestSuite {
           ..wantException = sdk.RestServerException,
         // }}}
         restApiClientTestCase()
-          ..descr = "Fetching Exchange from API with API Key, 503" // {{{
+          ..descr = "Fetching Exchange with API Key, 503" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
           ..setDomain = _testApiDomain
@@ -96,7 +96,7 @@ class restApiClientTestSuite {
           ..wantException = sdk.RestServerException,
         // }}}
         restApiClientTestCase()
-          ..descr = "Fetching Assets from API, 503" // {{{
+          ..descr = "Fetching Assets, 503" // {{{
           ..methodName = "fetchAssets"
           ..setDomain = _testApiDomain
           ..wantPath = "/assets"
@@ -128,10 +128,10 @@ class restApiClientTestSuite {
       ..fiat = true;
 
     var testSet = restApiClientTestSet()
-      ..testGroupName = "Test Fetch Assets"
+      ..testGroupName = "Test fetchAssets"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching assets from API" // {{{
+          ..descr = "Fetching assets" // {{{
           ..methodName = "fetchAssets"
           ..setDomain = _testApiDomain
           ..wantPath = "/assets"
@@ -166,7 +166,7 @@ class restApiClientTestSuite {
           ..wantRes = <sdk.Asset>[],
         // }}}
         restApiClientTestCase()
-          ..descr = "Malformed asset in list" // {{{
+          ..descr = "Malformed response (asset symbol is null)" // {{{
           ..methodName = "fetchAssets"
           ..setDomain = _testApiDomain
           ..wantPath = "/assets"
@@ -197,54 +197,10 @@ class restApiClientTestSuite {
       ..fiat = false;
 
     var testSet = restApiClientTestSet()
-      ..testGroupName = "Test Fetch Assets"
+      ..testGroupName = "Test fetchAsset"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching Bitcoin from API, full response" // {{{
-          ..methodName = "fetchAsset"
-          ..posArgs = ["btc"]
-          ..setDomain = _testApiDomain
-          ..wantPath = "/assets/btc"
-          ..respJson = '''
-          {
-            "result": {
-              "id":60,
-              "symbol":"btc",
-              "name":"Bitcoin",
-              "fiat":false,
-              "markets":{
-                "base":[
-                  {
-                    "id":4635,
-                    "exchange":"kraken-futures",
-                    "pair":"btcusd-quarterly-futures",
-                    "active":true,
-                    "route":"https://api.cryptowat.ch/markets/kraken-futures/btcusd-quarterly-futures"
-                  }
-                ],
-                "quote":[
-                  {
-                    "id":60917,
-                    "exchange":"kraken-futures",
-                    "pair":"xrpbtc-perpetual-futures",
-                    "active":true,
-                    "route":"https://api.cryptowat.ch/markets/kraken-futures/xrpbtc-perpetual-futures"
-                  }
-                ]
-              }
-            },
-            "allowance":{
-              "cost":1117794,
-              "remaining": 3998882206,
-              "remainingPaid":0,
-              "upgrade": "Upgrade for a higher allowance, starting at \$15/month for 16 seconds/hour. https://cryptowat.ch/pricing"
-            }
-          }
-          '''
-          ..wantRes = btc,
-        // }}}
-        restApiClientTestCase()
-          ..descr = "Fetching Bitcoin from API, just the essentials" // {{{
+          ..descr = "Fetching Bitcoin" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
@@ -262,27 +218,7 @@ class restApiClientTestSuite {
           ..wantRes = btc,
         // }}}
         restApiClientTestCase()
-          ..descr = "Fetching Bitcoin from API with API Key" // {{{
-          ..methodName = "fetchAsset"
-          ..posArgs = ["btc"]
-          ..setDomain = _testApiDomain
-          ..setApiKey = _testApiKey
-          ..wantPath = "/assets/btc"
-          ..wantHeaders = {"X-CW-API-Key": _testApiKey}
-          ..respJson = '''
-          {
-            "result": {
-              "id":60,
-              "symbol":"btc",
-              "name":"Bitcoin",
-              "fiat":false
-            }
-          }
-          '''
-          ..wantRes = btc,
-        // }}}
-        restApiClientTestCase()
-          ..descr = "Poorly formatted response, throws error" // {{{
+          ..descr = "Malformed asset (id is NaN)" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
@@ -301,8 +237,19 @@ class restApiClientTestSuite {
           '''
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected int field id, instead got String(NaN)",
-          )
-
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Asset not found" // {{{
+          ..methodName = "fetchAsset"
+          ..posArgs = ["btc"]
+          ..setDomain = _testApiDomain
+          ..setApiKey = _testApiKey
+          ..wantPath = "/assets/btc"
+          ..wantHeaders = {"X-CW-API-Key": _testApiKey}
+          ..respJson = '{"error": "Asset not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
         // }}}
       ];
 
@@ -348,10 +295,10 @@ class restApiClientTestSuite {
       ..futuresContractPeriod = "perpetual";
 
     var testSet = restApiClientTestSet()
-      ..testGroupName = "Test Fetch Pairs"
+      ..testGroupName = "Test fetchPairs"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching pairs from API" // {{{
+          ..descr = "Fetching pairs" // {{{
           ..methodName = "fetchPairs"
           ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
@@ -417,7 +364,7 @@ class restApiClientTestSuite {
           ..wantRes = <sdk.Pair>[],
         // }}}
         restApiClientTestCase()
-          ..descr = "Malformed pair in list" // {{{
+          ..descr = "Malformed response (should be list but is map)" // {{{
           ..methodName = "fetchPairs"
           ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
@@ -436,6 +383,166 @@ class restApiClientTestSuite {
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected Iterable field result, instead got _InternalLinkedHashMap<String, dynamic>({id: 60, symbol: btc, name: Bitcoin, fiat: false})",
           )
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_FetchPair() {
+    var btc = sdk.Asset()
+      ..id = 60
+      ..symbol = "btc"
+      ..name = "Bitcoin"
+      ..fiat = false;
+
+    var usd = sdk.Asset()
+      ..id = 98
+      ..symbol = "usd"
+      ..name = "United States Dollar"
+      ..fiat = true;
+
+    var btcusd = sdk.Pair()
+      ..id = 9
+      ..symbol = "btcusd"
+      ..base = btc
+      ..quote = usd;
+
+    var btcusdPerpFuture = sdk.Pair()
+      ..id = 175
+      ..symbol = "btcusd-perpetual-futures"
+      ..base = btc
+      ..quote = usd
+      ..futuresContractPeriod = "perpetual";
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchPair"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching spot pair" // {{{
+          ..methodName = "fetchPair"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 9,
+              "symbol": "btcusd",
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              }
+            }
+          }
+          '''
+          ..wantRes = btcusd,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching futures pair" // {{{
+          ..methodName = "fetchPair"
+          ..posArgs = ["btcusd-perpetual-futures"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd-perpetual-futures"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 175,
+              "symbol": "btcusd-perpetual-futures",
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              },
+              "futuresContractPeriod": "perpetual"
+            }
+          }
+          '''
+          ..wantRes = btcusdPerpFuture,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair not found" // {{{
+          ..methodName = "fetchPair"
+          ..posArgs = ["fooBarBaz"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/fooBarBaz"
+          ..respJson = '{"error": "Pair not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (id is not set)" // {{{
+          ..methodName = "fetchPair"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd"
+          ..respJson = '''
+          {
+            "result": {
+              "symbol": "btcusd",
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              }
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected int field id, instead got Null(null)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (symbol should be string)" // {{{
+          ..methodName = "fetchPair"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 9,
+              "symbol": 42,
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              }
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected String field symbol, instead got int(42)",
+          )
+        // }}}
       ];
 
     _runRestApiClientTestSet(testSet);
