@@ -925,6 +925,164 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
+  static void _test_fetchOrderBookSnapshot() {
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchOrderBookSnapshot"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching markets, Ok" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/orderbook"
+          ..respJson = '''
+          {
+            "result": {
+              "asks":[
+                [9100, 0.1],
+                [9105, 0.2],
+                [9110, 1]
+              ],
+              "bids":[
+                [9095, 1],
+                [9090, 0.2],
+                [9085, 0.1]
+              ],
+              "seqNum": 20
+            }
+          }
+          '''
+          ..wantRes = sdk.OrderBookSnapshot(
+            [
+              sdk.PublicOrder(9100, 0.1),
+              sdk.PublicOrder(9105, 0.2),
+              sdk.PublicOrder(9110, 1),
+            ],
+            [
+              sdk.PublicOrder(9095, 1),
+              sdk.PublicOrder(9090, 0.2),
+              sdk.PublicOrder(9085, 0.1),
+            ],
+            20,
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange for market not found" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["foo", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/foo/btcusd/orderbook"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair for market not found" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "barbaz"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/barbaz/orderbook"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (result is not Map)" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/orderbook"
+          ..respJson = '{"result": []}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Map<String, dynamic> field result, instead got List<dynamic>([])",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (ask price is NaN)" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/orderbook"
+          ..respJson = '''
+          {
+            "result": {
+              "asks":[
+                ["NaN", 0.1],
+                [9105, 0.2],
+                [9110, 1]
+              ],
+              "bids":[
+                [9095, 1],
+                [9090, 0.2],
+                [9085, 0.1]
+              ],
+              "seqNum": 20
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected element 0 of array to be of type num, instead got String(NaN)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (bid amount is NaN)" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/orderbook"
+          ..respJson = '''
+          {
+            "result": {
+              "asks":[
+                [9100, 0.1],
+                [9105, 0.2],
+                [9110, 1]
+              ],
+              "bids":[
+                [9095, 1],
+                [9090, "NaN"],
+                [9085, 0.1]
+              ],
+              "seqNum": 20
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected element 1 of array to be of type num, instead got String(NaN)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (seqNum is double)" // {{{
+          ..methodName = "fetchOrderBookSnapshot"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/orderbook"
+          ..respJson = '''
+          {
+            "result": {
+              "asks":[
+                [9100, 0.1],
+                [9105, 0.2],
+                [9110, 1]
+              ],
+              "bids":[
+                [9095, 1],
+                [9090, 0.2],
+                [9085, 0.1]
+              ],
+              "seqNum": 1.3
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected int field seqNum, instead got double(1.3)",
+          )
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
     var testFuncIMs = List<mirrors.InstanceMirror>();
 

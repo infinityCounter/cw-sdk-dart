@@ -121,12 +121,12 @@ common.PublicOrder _parsePublicOrder(Iterable props) {
 
   var price = props.elementAt(0);
   if (price is! num) {
-    throw _buildExceptionWrongFieldType("price", "num", price);
+    throw _buildExceptionWrongIndexType(0, "num", price);
   }
 
   var amount = props.elementAt(1);
   if (amount is! num) {
-    throw _buildExceptionWrongFieldType("amount", "num", amount);
+    throw _buildExceptionWrongIndexType(1, "num", amount);
   }
 
   return common.PublicOrder(price, amount);
