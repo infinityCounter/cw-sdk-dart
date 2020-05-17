@@ -925,13 +925,13 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
-  static void _test_fetchOrderBookSnapshot() {
+  static void _test_fetchOrderBook() {
     var testSet = restApiClientTestSet()
-      ..testGroupName = "Test fetchOrderBookSnapshot"
+      ..testGroupName = "Test fetchOrderBook"
       ..cases = [
         restApiClientTestCase()
           ..descr = "Fetching markets, Ok" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
@@ -952,7 +952,7 @@ class restApiClientTestSuite {
             }
           }
           '''
-          ..wantRes = sdk.OrderBookSnapshot(
+          ..wantRes = sdk.OrderBook(
             [
               sdk.PublicOrder(9100, 0.1),
               sdk.PublicOrder(9105, 0.2),
@@ -968,7 +968,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Exchange for market not found" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["foo", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/foo/btcusd/orderbook"
@@ -978,7 +978,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Pair for market not found" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "barbaz"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/barbaz/orderbook"
@@ -988,7 +988,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Malformed response (result is not Map)" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
@@ -999,7 +999,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Malformed response (ask price is NaN)" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
@@ -1026,7 +1026,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Malformed response (bid amount is NaN)" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
@@ -1053,7 +1053,7 @@ class restApiClientTestSuite {
         // }}}
         restApiClientTestCase()
           ..descr = "Malformed response (seqNum is double)" // {{{
-          ..methodName = "fetchOrderBookSnapshot"
+          ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"

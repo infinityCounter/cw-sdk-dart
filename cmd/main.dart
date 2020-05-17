@@ -19,7 +19,7 @@ main() {
   futures.add(apiClient.fetchPairVwap("btcusd"));
   futures.add(apiClient.fetchExchange("bitfinex"));
   futures.add(apiClient.fetchMarket("bitfinex", "btcusd"));
-  futures.add(apiClient.fetchOrderBookSnapshot("bitfinex", "btcusd"));
+  futures.add(apiClient.fetchOrderBook("bitfinex", "btcusd"));
   futures.add(apiClient.fetchCandles(
     "bitfinex",
     "btcdomusdt-perpetual-futures",

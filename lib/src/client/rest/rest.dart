@@ -247,10 +247,9 @@ class RestApiClient {
     return ret;
   }
 
-  /// Returns a Future that resolves to the current order book snapshot
+  /// Returns a Future that resolves to the current order book
   /// for the market with exchange [exchangeSym] and pair [pairSym].
-  Future<common.OrderBookSnapshot> fetchOrderBookSnapshot(
-      String exchangeSym, String pairSym) {
+  Future<common.OrderBook> fetchOrderBook(String exchangeSym, String pairSym) {
     var ret = Future(() {
       exchangeSym = Uri.encodeComponent(exchangeSym);
       pairSym = Uri.encodeComponent(pairSym);
@@ -264,7 +263,8 @@ class RestApiClient {
         }
 
         var unparsedSnapshot = _getResultAsMap(resp.body);
-        return _parseOrderBookSnapshot(unparsedSnapshot);
+        var snapshot = _parseOrderBookSnapshot(unparsedSnapshot);
+        return common.OrderBook.fromSnapshot(snapshot);
       });
     });
 
