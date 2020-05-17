@@ -13,6 +13,7 @@ class restApiClientTestCase {
   Map<String, dynamic> namedArgs;
 
   String wantPath = "";
+  Map<String, String> wantParams;
   Map<String, String> wantHeaders = {};
 
   String methodName;
@@ -1083,6 +1084,331 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
+  static void _test_fetchCandles() {
+    var candles = {
+      "60": [
+        sdk.Candle()
+          ..timestamp = 1589627580
+          ..open = 9400
+          ..high = 9450
+          ..low = 9400
+          ..close = 9440
+          ..volumeBase = 0.1
+          ..volumeQuote = 943,
+        sdk.Candle()
+          ..timestamp = 1589627640
+          ..open = 9440
+          ..high = 9440
+          ..low = 9420
+          ..close = 9420
+          ..volumeBase = 0.2
+          ..volumeQuote = 1800,
+        sdk.Candle()
+          ..timestamp = 1589627700
+          ..open = 9420
+          ..high = 9480
+          ..low = 9410
+          ..close = 9450
+          ..volumeBase = 0.15
+          ..volumeQuote = 1250,
+      ],
+      "180": [
+        sdk.Candle()
+          ..timestamp = 1589507820
+          ..open = 9350
+          ..high = 9390
+          ..low = 9340
+          ..close = 9370
+          ..volumeBase = 1
+          ..volumeQuote = 9350,
+        sdk.Candle()
+          ..timestamp = 1589628000
+          ..open = 9370
+          ..high = 9400
+          ..low = 9360
+          ..close = 9370
+          ..volumeBase = 0.2
+          ..volumeQuote = 1800,
+        sdk.Candle()
+          ..timestamp = 1589628180
+          ..open = 9370
+          ..high = 9370
+          ..low = 9310
+          ..close = 9310
+          ..volumeBase = 0.5
+          ..volumeQuote = 4670,
+      ],
+      "300": [
+        sdk.Candle()
+          ..timestamp = 1589388000
+          ..open = 9400
+          ..high = 9480
+          ..low = 9250
+          ..close = 9280
+          ..volumeBase = 2.5
+          ..volumeQuote = 24500,
+        sdk.Candle()
+          ..timestamp = 1589388300
+          ..open = 9280
+          ..high = 9280
+          ..low = 9250
+          ..close = 9250
+          ..volumeBase = 1.8
+          ..volumeQuote = 18000,
+        sdk.Candle()
+          ..timestamp = 1589388600
+          ..open = 9250
+          ..high = 9350
+          ..low = 9250
+          ..close = 9300
+          ..volumeBase = 0.4
+          ..volumeQuote = 3760,
+      ],
+    };
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchCandles"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching candles, Ok" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/ohlc"
+          ..respJson = '''
+          {
+            "result": {
+              "60": [
+                [
+                  1589627580,
+                  9400,
+                  9450,
+                  9400,
+                  9440,
+                  0.1,
+                  943
+                ],
+                [
+                  1589627640,
+                  9440,
+                  9440,
+                  9420,
+                  9420,
+                  0.2,
+                  1800
+                  ],
+                [
+                  1589627700,
+                  9420,
+                  9480,
+                  9410,
+                  9450,
+                  0.15,
+                  1250
+                  ]
+              ],
+              "180": [
+                [
+                  1589507820,
+                  9350,
+                  9390,
+                  9340,
+                  9370,
+                  1,
+                  9350
+                ],
+                [
+                  1589628000,
+                  9370,
+                  9400,
+                  9360,
+                  9370,
+                  0.2,
+                  1800
+                ],
+                [
+                  1589628180,
+                  9370,
+                  9370,
+                  9310,
+                  9310,
+                  0.5,
+                  4670
+                ]
+              ],
+              "300": [
+                [
+                  1589388000,
+                  9400,
+                  9480,
+                  9250,
+                  9280,
+                  2.5,
+                  24500
+                ],
+                [
+                  1589388300,
+                  9280,
+                  9280,
+                  9250,
+                  9250,
+                  1.8,
+                  18000
+                ],
+                [
+                  1589388600,
+                  9250,
+                  9350,
+                  9250,
+                  9300,
+                  0.4,
+                  3760
+                ]
+              ]
+            }
+          }
+          '''
+          ..wantRes = candles,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Use Filter Params" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..namedArgs = {
+            "periods": ["180,300"],
+            "before": 1589388100,
+            "after": 1589628150,
+          }
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/ohlc"
+          ..wantParams = {
+            "periods": "180,300",
+            "before": "1589388100",
+            "after": "1589628150",
+          }
+          ..respJson = '''
+          {
+            "result": {
+              "180": [
+                [
+                  1589628180,
+                  9370,
+                  9370,
+                  9310,
+                  9310,
+                  0.5,
+                  4670
+                ]
+              ],
+              "300": [
+                [
+                  1589388000,
+                  9400,
+                  9480,
+                  9250,
+                  9280,
+                  2.5,
+                  24500
+                ]
+              ]
+            }
+          }
+          '''
+          ..wantRes = {
+            "180": [candles["180"][2]],
+            "300": [candles["300"][0]],
+          },
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange for market not found" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["foo", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/foo/btcusd/ohlc"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair for market not found" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "barbaz"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/barbaz/ohlc"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (result is not Map)" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/ohlc"
+          ..respJson = '{"result": []}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Map<String, dynamic> field result, instead got List<dynamic>([])",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (timestamp is NaN)" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/ohlc"
+          ..respJson = '''
+          {
+            "result": {
+              "180": [
+                [
+                  "NaN",
+                  9370,
+                  9370,
+                  9310,
+                  9310,
+                  0.5,
+                  4670
+                ]
+              ]
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected element 0 of array to be of type int, instead got String(NaN)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (candle is not an array)" // {{{
+          ..methodName = "fetchCandles"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd/ohlc"
+          ..respJson = '''
+          {
+            "result": {
+              "180": [
+                {
+                  "timestamp": 1589388000,
+                  "open": 9370,
+                  "high": 9370,
+                  "low": 9310,
+                  "close": 9310,
+                  "volumeBase": 0.5,
+                  "volumeQuote": 4670
+                }
+              ]
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected element 0 of array to be of type Iterable, instead got _InternalLinkedHashMap<String, dynamic>({timestamp: 1589388000, open: 9370, high: 9370, low: 9310, close: 9310, volumeBase: 0.5, volumeQuote: 4670})",
+          ),
+        // }}}
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
     var testFuncIMs = List<mirrors.InstanceMirror>();
 
@@ -1126,16 +1452,16 @@ class restApiClientTestSuite {
           domain ??= _testApiDomain;
 
           var path = tc.wantPath;
-          if (path[0] != "/") {
-            path = "/" + path;
+          if (path[0] == "/") {
+            path = path.replaceFirst("/", "");
           }
 
-          var wantUrl = "https://${domain}${path}";
+          var wantUrl = Uri.https(domain, path, tc.wantParams);
 
           var mockHttpClient = httpTesting.MockClient((http.Request req) {
-            testing.expect(req.url.toString(), testing.equals(wantUrl));
+            testing.expect(req.url, testing.equals(wantUrl));
 
-            if (req.url.toString() != wantUrl) {
+            if (req.url != wantUrl) {
               return Future.value(http.Response("Not Found", 404));
             }
 

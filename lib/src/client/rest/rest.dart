@@ -300,6 +300,10 @@ class RestApiClient {
         params["after"] = after.toString();
       }
 
+      if (params.length == 0) {
+        params = null;
+      }
+
       exchangeSym = Uri.encodeComponent(exchangeSym);
       pairSym = Uri.encodeComponent(pairSym);
 
