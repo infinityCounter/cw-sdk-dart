@@ -54,7 +54,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching Exchange, 200" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respJson = '''
           {
@@ -73,7 +72,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching Exchange, 429" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respStatusCode = 429
           ..wantException = sdk.RateLimitException,
@@ -82,7 +80,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching Exchange, 500" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respStatusCode = 500
           ..wantException = sdk.RestServerException,
@@ -91,7 +88,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching Exchange with API Key, 503" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respStatusCode = 503
           ..wantException = sdk.RestServerException,
@@ -99,7 +95,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Fetching Assets, 503" // {{{
           ..methodName = "fetchAssets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/assets"
           ..respStatusCode = 503
           ..wantException = sdk.RestServerException,
@@ -134,7 +129,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Fetching assets" // {{{
           ..methodName = "fetchAssets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/assets"
           ..respJson = '''
           {
@@ -161,7 +155,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Empty list of results" // {{{
           ..methodName = "fetchAssets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/assets"
           ..respJson = '{"result": []}'
           ..wantRes = <sdk.Asset>[],
@@ -169,7 +162,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Malformed response (asset symbol is null)" // {{{
           ..methodName = "fetchAssets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/assets"
           ..respJson = '''
           {
@@ -204,7 +196,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching Asset, Ok" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/assets/btc"
           ..respJson = '''
           {
@@ -222,7 +213,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed asset (id is NaN)" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
-          ..setDomain = _testApiDomain
           ..setApiKey = _testApiKey
           ..wantPath = "/assets/btc"
           ..wantHeaders = {"X-CW-API-Key": _testApiKey}
@@ -244,7 +234,6 @@ class restApiClientTestSuite {
           ..descr = "Asset not found" // {{{
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
-          ..setDomain = _testApiDomain
           ..setApiKey = _testApiKey
           ..wantPath = "/assets/btc"
           ..wantHeaders = {"X-CW-API-Key": _testApiKey}
@@ -301,7 +290,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Fetching pairs, Ok" // {{{
           ..methodName = "fetchPairs"
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
           ..respJson = '''
           {
@@ -359,7 +347,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Empty list of results" // {{{
           ..methodName = "fetchPairs"
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
           ..respJson = '{"result": []}'
           ..wantRes = <sdk.Pair>[],
@@ -367,7 +354,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Malformed response (should be list but is map)" // {{{
           ..methodName = "fetchPairs"
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs"
 
           // FetchPairs is expecting an array, not an object
@@ -423,7 +409,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching spot pair, Ok" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd"
           ..respJson = '''
           {
@@ -451,7 +436,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching futures pair, Ok" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd-perpetual-futures"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd-perpetual-futures"
           ..respJson = '''
           {
@@ -480,7 +464,6 @@ class restApiClientTestSuite {
           ..descr = "Pair not found" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["fooBarBaz"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/fooBarBaz"
           ..respJson = '{"error": "Pair not found"}'
           ..respStatusCode = 404
@@ -490,7 +473,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (id is not set)" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd"
           ..respJson = '''
           {
@@ -519,7 +501,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (symbol should be string)" // {{{
           ..methodName = "fetchPair"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd"
           ..respJson = '''
           {
@@ -558,7 +539,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching vwap, Ok" // {{{
           ..methodName = "fetchPairVwap"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd/vwap"
           ..respJson = '{"result": {"vwap": 9200}}'
           ..wantRes = 9200,
@@ -567,7 +547,6 @@ class restApiClientTestSuite {
           ..descr = "Pair not found" // {{{
           ..methodName = "fetchPairVwap"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd/vwap"
           ..respJson = '{"error": "Pair not found"}'
           ..respStatusCode = 404
@@ -577,7 +556,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (vwap is NaN)" // {{{
           ..methodName = "fetchPairVwap"
           ..posArgs = ["btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/pairs/btcusd/vwap"
           ..respJson = '{"result": {"vwap": "NaN"}}'
           ..wantException = sdk.UnexpectedResponseFormatException(
@@ -614,7 +592,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Fetching exchanges, Ok" // {{{
           ..methodName = "fetchExchanges"
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges"
           ..respJson = '''
           {
@@ -641,7 +618,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Empty list of results" // {{{
           ..methodName = "fetchExchanges"
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges"
           ..respJson = '{"result": []}'
           ..wantRes = <sdk.Exchange>[],
@@ -649,7 +625,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Malformed response (active field is int)" // {{{
           ..methodName = "fetchExchanges"
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges"
           ..respJson = '''
           {
@@ -684,7 +659,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching exchange, Ok" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respJson = '''
           {
@@ -702,7 +676,6 @@ class restApiClientTestSuite {
           ..descr = "Exchange not found" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respJson = '{"error": "Exchange not found"}'
           ..respStatusCode = 404
@@ -712,7 +685,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (active field is int)" // {{{
           ..methodName = "fetchExchange"
           ..posArgs = ["bitfinex"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/exchanges/bitfinex"
           ..respJson = '''
           {
@@ -758,7 +730,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Fetching markets, Ok" // {{{
           ..methodName = "fetchMarkets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets"
           ..respJson = '''
           {
@@ -785,7 +756,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Empty list of results" // {{{
           ..methodName = "fetchMarkets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets"
           ..respJson = '{"result": []}'
           ..wantRes = <sdk.Market>[],
@@ -793,7 +763,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Malformed response (result is not Iterable)" // {{{
           ..methodName = "fetchMarkets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets"
           ..respJson = '{"result": "fooBar"}'
           ..wantException = sdk.UnexpectedResponseFormatException(
@@ -803,7 +772,6 @@ class restApiClientTestSuite {
         restApiClientTestCase()
           ..descr = "Malformed response (exchange is int)" // {{{
           ..methodName = "fetchMarkets"
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets"
           ..respJson = '''
           {
@@ -823,7 +791,6 @@ class restApiClientTestSuite {
           ..descr = "Use exchange filter" // {{{
           ..methodName = "fetchMarkets"
           ..namedArgs = {"exchange": "kraken"}
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/kraken"
           ..respJson = '''
           {
@@ -856,7 +823,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching markets, Ok" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd"
           ..respJson = '''
           {
@@ -874,7 +840,6 @@ class restApiClientTestSuite {
           ..descr = "Exchange for market not found" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["foo", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/foo/btcusd"
           ..respJson = '{"error": "Exchange not found"}'
           ..respStatusCode = 404
@@ -884,7 +849,6 @@ class restApiClientTestSuite {
           ..descr = "Pair for market not found" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["bitfinex", "barbaz"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/barbaz"
           ..respJson = '{"error": "Instrument not found"}'
           ..respStatusCode = 404
@@ -894,7 +858,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (result is not Map)" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd"
           ..respJson = '{"result": []}'
           ..wantException = sdk.UnexpectedResponseFormatException(
@@ -905,7 +868,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (exchange is int)" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd"
           ..respJson = '''
           {
@@ -934,7 +896,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching markets, Ok" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
           ..respJson = '''
           {
@@ -971,7 +932,6 @@ class restApiClientTestSuite {
           ..descr = "Exchange for market not found" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["foo", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/foo/btcusd/orderbook"
           ..respJson = '{"error": "Exchange not found"}'
           ..respStatusCode = 404
@@ -981,7 +941,6 @@ class restApiClientTestSuite {
           ..descr = "Pair for market not found" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "barbaz"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/barbaz/orderbook"
           ..respJson = '{"error": "Instrument not found"}'
           ..respStatusCode = 404
@@ -991,7 +950,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (result is not Map)" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
           ..respJson = '{"result": []}'
           ..wantException = sdk.UnexpectedResponseFormatException(
@@ -1002,7 +960,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (ask price is NaN)" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
           ..respJson = '''
           {
@@ -1029,7 +986,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (bid amount is NaN)" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
           ..respJson = '''
           {
@@ -1056,7 +1012,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (seqNum is double)" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
           ..respJson = '''
           {
@@ -1172,7 +1127,6 @@ class restApiClientTestSuite {
           ..descr = "Fetching candles, Ok" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/ohlc"
           ..respJson = '''
           {
@@ -1278,7 +1232,6 @@ class restApiClientTestSuite {
             "before": 1589388100,
             "after": 1589628150,
           }
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/ohlc"
           ..wantParams = {
             "periods": "180,300",
@@ -1322,7 +1275,6 @@ class restApiClientTestSuite {
           ..descr = "Exchange for market not found" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["foo", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/foo/btcusd/ohlc"
           ..respJson = '{"error": "Exchange not found"}'
           ..respStatusCode = 404
@@ -1332,7 +1284,6 @@ class restApiClientTestSuite {
           ..descr = "Pair for market not found" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["bitfinex", "barbaz"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/barbaz/ohlc"
           ..respJson = '{"error": "Instrument not found"}'
           ..respStatusCode = 404
@@ -1342,7 +1293,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (result is not Map)" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/ohlc"
           ..respJson = '{"result": []}'
           ..wantException = sdk.UnexpectedResponseFormatException(
@@ -1353,7 +1303,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (timestamp is NaN)" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/ohlc"
           ..respJson = '''
           {
@@ -1380,7 +1329,6 @@ class restApiClientTestSuite {
           ..descr = "Malformed response (candle is not an array)" // {{{
           ..methodName = "fetchCandles"
           ..posArgs = ["bitfinex", "btcusd"]
-          ..setDomain = _testApiDomain
           ..wantPath = "/markets/bitfinex/btcusd/ohlc"
           ..respJson = '''
           {
@@ -1403,6 +1351,51 @@ class restApiClientTestSuite {
             "expected element 0 of array to be of type Iterable, instead got _InternalLinkedHashMap<String, dynamic>({timestamp: 1589388000, open: 9370, high: 9370, low: 9310, close: 9310, volumeBase: 0.5, volumeQuote: 4670})",
           ),
         // }}}
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchMarketPrice() {
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchMarketPrice"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching price, Ok" // {{{
+          ..methodName = "fetchMarketPrice"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/price"
+          ..respJson = '{"result": {"price": 9200}}'
+          ..wantRes = 9200,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange not found" // {{{
+          ..methodName = "fetchMarketPrice"
+          ..posArgs = ["fooBar", "btcusd"]
+          ..wantPath = "/markets/fooBar/btcusd/price"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair not found" // {{{
+          ..methodName = "fetchMarketPrice"
+          ..posArgs = ["bitfinex", "fooBaz"]
+          ..wantPath = "/markets/bitfinex/fooBaz/price"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (price is NaN)" // {{{
+          ..methodName = "fetchMarketPrice"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/price"
+          ..respJson = '{"result": {"price": "NaN"}}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected num field price, instead got String(NaN)",
+          ),
         // }}}
       ];
 
