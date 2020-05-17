@@ -548,6 +548,45 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
+  static void _test_FetchPairVwap() {
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchPairVwap"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching vwap, Ok" // {{{
+          ..methodName = "fetchPairVwap"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd/vwap"
+          ..respJson = '{"result": {"vwap": 9200}}'
+          ..wantRes = 9200,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair not found" // {{{
+          ..methodName = "fetchPairVwap"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd/vwap"
+          ..respJson = '{"error": "Pair not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (vwap is NaN)" // {{{
+          ..methodName = "fetchPairVwap"
+          ..posArgs = ["btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs/btcusd/vwap"
+          ..respJson = '{"result": {"vwap": "NaN"}}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected num field vwap, instead got String(NaN)",
+          ),
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
     var testFuncIMs = List<mirrors.InstanceMirror>();
 
