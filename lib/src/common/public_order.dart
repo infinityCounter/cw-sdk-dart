@@ -4,7 +4,7 @@ class PublicOrder {
   num price = 0;
   num amount = 0;
 
-  PublicOrder(this.price, this.amount);
+  PublicOrder([this.price, this.amount]);
 
   /// Aggregates orders of the same price.
   ///
