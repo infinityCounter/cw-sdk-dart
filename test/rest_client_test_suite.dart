@@ -649,8 +649,6 @@ class restApiClientTestSuite {
           ..methodName = "fetchExchanges"
           ..setDomain = _testApiDomain
           ..wantPath = "/exchanges"
-
-          // FetchPairs is expecting an array, not an object
           ..respJson = '''
           {
             "result": [{
@@ -659,6 +657,68 @@ class restApiClientTestSuite {
               "name": "Bitfinex",
               "active": 42
             }]
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected bool field active, instead got int(42)",
+          )
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchExchange() {
+    var bitfinex = sdk.Exchange()
+      ..id = 1
+      ..name = "Bitfinex"
+      ..symbol = "bitfinex"
+      ..active = true;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchExchanges"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching exchange, Ok" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 1,
+              "symbol": "bitfinex",
+              "name": "Bitfinex",
+              "active": true
+            }
+          }
+          '''
+          ..wantRes = bitfinex,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange not found" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (active field is int)" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 1,
+              "symbol": "bitfinex",
+              "name": "Bitfinex",
+              "active": 42
+            }
           }
           '''
           ..wantException = sdk.UnexpectedResponseFormatException(
