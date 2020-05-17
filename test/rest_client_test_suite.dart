@@ -383,6 +383,7 @@ class restApiClientTestSuite {
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected Iterable field result, instead got _InternalLinkedHashMap<String, dynamic>({id: 60, symbol: btc, name: Bitcoin, fiat: false})",
           )
+        // }}}
       ];
 
     _runRestApiClientTestSet(testSet);
@@ -662,6 +663,7 @@ class restApiClientTestSuite {
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected bool field active, instead got int(42)",
           )
+        // }}}
       ];
 
     _runRestApiClientTestSet(testSet);
@@ -724,6 +726,98 @@ class restApiClientTestSuite {
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected bool field active, instead got int(42)",
           )
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchMarkets() {
+    var bitfinexBtcUsd = sdk.Market()
+      ..id = 1
+      ..exchange = "bitfinex"
+      ..pair = "btcusd"
+      ..active = true;
+
+    var krakenEthUsd = sdk.Market()
+      ..id = 96
+      ..exchange = "kraken"
+      ..pair = "ethusd"
+      ..active = true;
+
+    var bitmexXtzFuture = sdk.Market()
+      ..id = 244
+      ..exchange = "bitmex"
+      ..pair = "xtzbtc-quarterly-futures"
+      ..active = false;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchMarkets"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching markets, Ok" // {{{
+          ..methodName = "fetchMarkets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets"
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 1,
+              "exchange": "bitfinex",
+              "pair": "btcusd",
+              "active": true
+            },{
+              "id": 96,
+              "exchange": "kraken",
+              "pair": "ethusd",
+              "active": true
+            },{
+              "id": 244,
+              "exchange": "bitmex",
+              "pair": "xtzbtc-quarterly-futures",
+              "active": false
+            }]
+          }
+          '''
+          ..wantRes = [bitfinexBtcUsd, krakenEthUsd, bitmexXtzFuture],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Empty list of results" // {{{
+          ..methodName = "fetchMarkets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets"
+          ..respJson = '{"result": []}'
+          ..wantRes = <sdk.Market>[],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (result is not Iterable)" // {{{
+          ..methodName = "fetchMarkets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets"
+          ..respJson = '{"result": "fooBar"}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Iterable field result, instead got String(fooBar)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (exchange is int)" // {{{
+          ..methodName = "fetchMarkets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets"
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 1,
+              "exchange": 42,
+              "pair": "btcusd",
+              "active": true
+            }]
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected String field exchange, instead got int(42)",
+          )
+        // }}}
       ];
 
     _runRestApiClientTestSet(testSet);
