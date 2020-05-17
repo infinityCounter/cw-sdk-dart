@@ -820,7 +820,7 @@ class restApiClientTestSuite {
       ..testGroupName = "Test fetchMarket"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching markets, Ok" // {{{
+          ..descr = "Fetching market, Ok" // {{{
           ..methodName = "fetchMarket"
           ..posArgs = ["bitfinex", "btcusd"]
           ..wantPath = "/markets/bitfinex/btcusd"
@@ -893,7 +893,7 @@ class restApiClientTestSuite {
       ..testGroupName = "Test fetchOrderBook"
       ..cases = [
         restApiClientTestCase()
-          ..descr = "Fetching markets, Ok" // {{{
+          ..descr = "Fetching order book, Ok" // {{{
           ..methodName = "fetchOrderBook"
           ..posArgs = ["bitfinex", "btcusd"]
           ..wantPath = "/markets/bitfinex/btcusd/orderbook"
@@ -1351,6 +1351,125 @@ class restApiClientTestSuite {
             "expected element 0 of array to be of type Iterable, instead got _InternalLinkedHashMap<String, dynamic>({timestamp: 1589388000, open: 9370, high: 9370, low: 9310, close: 9310, volumeBase: 0.5, volumeQuote: 4670})",
           ),
         // }}}
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchSummary() {
+    var summary = sdk.Summary()
+      ..last = 9500.60
+      ..high = 9600.7
+      ..low = 9200.5
+      ..changeAbsolute = -48.29
+      ..changePercentage = -0.005
+      ..volumeBase = 3980.669
+      ..volumeQuote = 37500000;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchSummary"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching summary, Ok" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/summary"
+          ..respJson = '''
+          {
+            "result": {
+              "price": {
+                "last": 9500.60,
+                "high": 9600.7,
+                "low": 9200.5,
+                "change": {
+                  "percentage": -0.005,
+                  "absolute": -48.29
+                }
+              },
+              "volume": 3980.669,
+              "volumeQuote": 37500000
+            }
+          }
+          '''
+          ..wantRes = summary,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange for market not found" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["foo", "btcusd"]
+          ..wantPath = "/markets/foo/btcusd/summary"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair for market not found" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["bitfinex", "barbaz"]
+          ..wantPath = "/markets/bitfinex/barbaz/summary"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (result is not Map)" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/summary"
+          ..respJson = '{"result": []}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Map<String, dynamic> field result, instead got List<dynamic>([])",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (last price is NaN)" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/summary"
+          ..respJson = '''
+          {
+            "result": {
+              "price": {
+                "last": "NaN",
+                "high": 9600.7,
+                "low": 9200.5,
+                "change": {
+                  "percentage": -0.005,
+                  "absolute": -48.29
+                }
+              },
+              "volume": 3980.669,
+              "volumeQuote": 37500000
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected num field last, instead got String(NaN)",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (change is null)" // {{{
+          ..methodName = "fetchSummary"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/summary"
+          ..respJson = '''
+          {
+            "result": {
+              "price": {
+                "last": "NaN",
+                "high": 9600.7,
+                "low": 9200.5,
+                "change": null
+              },
+              "volume": 3980.669,
+              "volumeQuote": 37500000
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Map<String, dynamic> field change, instead got Null(null)",
+          ),
         // }}}
       ];
 
