@@ -13,7 +13,7 @@ main() {
   futures.add(apiClient.fetchPairs());
   futures.add(apiClient.fetchExchanges());
   futures.add(apiClient.fetchMarkets());
-  futures.add(apiClient.fetchMarkets("kraken"));
+  futures.add(apiClient.fetchMarkets(exchange: "kraken"));
   futures.add(apiClient.fetchAsset("btc"));
   futures.add(apiClient.fetchPair("btcusd"));
   futures.add(apiClient.fetchPairVwap("btcusd"));

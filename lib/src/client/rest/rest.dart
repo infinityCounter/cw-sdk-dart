@@ -203,11 +203,11 @@ class RestApiClient {
   ///
   /// If the [exchangeSym] argument is set, only markets for that exchange will be included
   /// in the response.
-  Future<List<common.Market>> fetchMarkets([String exchangeSym]) {
+  Future<List<common.Market>> fetchMarkets({String exchange}) {
     var ret = Future(() {
       var path = "markets";
-      if (exchangeSym != null) {
-        path += "/${Uri.encodeComponent(exchangeSym)}";
+      if (exchange != null) {
+        path += "/${Uri.encodeComponent(exchange)}";
       }
 
       var respFuture = this._doApiRequest(path);

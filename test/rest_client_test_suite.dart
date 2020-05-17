@@ -816,7 +816,25 @@ class restApiClientTestSuite {
           '''
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected String field exchange, instead got int(42)",
-          )
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Use exchange filter" // {{{
+          ..methodName = "fetchMarkets"
+          ..namedArgs = {"exchange": "kraken"}
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/kraken"
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 96,
+              "exchange": "kraken",
+              "pair": "ethusd",
+              "active": true
+            }]
+          }
+          '''
+          ..wantRes = [krakenEthUsd],
         // }}}
       ];
 
@@ -993,7 +1011,7 @@ class restApiClientTestSuite {
           Map<Symbol, dynamic> namedArgs;
 
           if (tc.namedArgs != null) {
-            tc.namedArgs.map((k, v) {
+            namedArgs = tc.namedArgs.map((k, v) {
               var kSym = mirrors.MirrorSystem.getSymbol(k);
               return MapEntry(kSym, v);
             });
