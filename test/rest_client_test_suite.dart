@@ -4,7 +4,7 @@ const _testApiDomain = "test-api.cryptowat.ch";
 const _testApiKey = "827e9876-2e28-403b-b277-9f17d892337c";
 
 class restApiClientTestCase {
-  String descr;
+  String descr = "";
 
   String setDomain;
   String setApiKey;
@@ -12,11 +12,13 @@ class restApiClientTestCase {
   List posArgs;
   Map<String, dynamic> namedArgs;
 
-  String wantUrl;
+  String wantPath = "";
+  Map<String, String> wantHeaders = {};
+
   String methodName;
 
   int respStatusCode;
-  String respJson;
+  String respJson = "";
 
   var wantRes;
   var wantException;
@@ -37,6 +39,159 @@ class restApiClientTestSuite {
     }
   }
 
+  static void _test_StatusCodeExceptions() {
+    var bitfinex = sdk.Exchange()
+      ..id = 1
+      ..name = "Bitfinex"
+      ..symbol = "bitfinex"
+      ..active = true;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test throwing exceptions for status codes"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching Exchange, 200" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respJson = '''
+          {
+            "result": {
+              "id":1,
+              "symbol":"bitfinex",
+              "name":"Bitfinex",
+              "active":true
+            }
+          }
+          '''
+          ..respStatusCode = 200
+          ..wantRes = bitfinex,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Exchange, 429" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respStatusCode = 429
+          ..wantException = sdk.RateLimitException,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Exchange, 500" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respStatusCode = 500
+          ..wantException = sdk.RestServerException,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Exchange from API with API Key, 503" // {{{
+          ..methodName = "fetchExchange"
+          ..posArgs = ["bitfinex"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/exchanges/bitfinex"
+          ..respStatusCode = 503
+          ..wantException = sdk.RestServerException,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Assets from API, 503" // {{{
+          ..methodName = "fetchAssets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/assets"
+          ..respStatusCode = 503
+          ..wantException = sdk.RestServerException,
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_FetchAssets() {
+    var btc = sdk.Asset()
+      ..id = 60
+      ..symbol = "btc"
+      ..name = "Bitcoin"
+      ..fiat = false;
+
+    var eth = sdk.Asset()
+      ..id = 77
+      ..symbol = "eth"
+      ..name = "Ethereum"
+      ..fiat = false;
+
+    var usd = sdk.Asset()
+      ..id = 98
+      ..symbol = "usd"
+      ..name = "United States Dollar"
+      ..fiat = true;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test Fetch Assets"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching assets from API" // {{{
+          ..methodName = "fetchAssets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/assets"
+          ..respJson = '''
+          {
+            "result": [{
+              "id":60,
+              "symbol":"btc",
+              "name":"Bitcoin",
+              "fiat":false
+            },{
+              "id":77,
+              "symbol":"eth",
+              "name":"Ethereum",
+              "fiat":false
+            },{
+              "id":98,
+              "symbol":"usd",
+              "name":"United States Dollar",
+              "fiat":true
+            }]
+          }
+          '''
+          ..respStatusCode = 200
+          ..wantRes = [btc, eth, usd],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Empty list of results" // {{{
+          ..methodName = "fetchAssets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/assets"
+          ..respJson = '{"result": []}'
+          ..respStatusCode = 200
+          ..wantRes = [],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed asset in list" // {{{
+          ..methodName = "fetchAssets"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/assets"
+          ..respJson = '''
+          {
+            "result": [{
+              "id":60,
+              "symbol":null,
+              "name":"Bitcoin",
+              "fiat":false
+            }]
+          }
+          '''
+          ..respStatusCode = 200
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected String field symbol, instead got Null(null)",
+          ),
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
   static void _test_FetchAsset() {
     var btc = sdk.Asset()
       ..id = 60
@@ -52,7 +207,7 @@ class restApiClientTestSuite {
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
-          ..wantUrl = "https://${_testApiDomain}/assets/btc"
+          ..wantPath = "/assets/btc"
           ..respJson = '''
           {
             "result": {
@@ -97,7 +252,7 @@ class restApiClientTestSuite {
           ..methodName = "fetchAsset"
           ..posArgs = ["btc"]
           ..setDomain = _testApiDomain
-          ..wantUrl = "https://${_testApiDomain}/assets/btc"
+          ..wantPath = "/assets/btc"
           ..respJson = '''
           {
             "result": {
@@ -109,11 +264,56 @@ class restApiClientTestSuite {
           }
           '''
           ..respStatusCode = 200
-          ..wantRes = btc
+          ..wantRes = btc,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Fetching Bitcoin from API with API Key" // {{{
+          ..methodName = "fetchAsset"
+          ..posArgs = ["btc"]
+          ..setDomain = _testApiDomain
+          ..setApiKey = _testApiKey
+          ..wantPath = "/assets/btc"
+          ..wantHeaders = {"X-CW-API-Key": _testApiKey}
+          ..respJson = '''
+          {
+            "result": {
+              "id":60,
+              "symbol":"btc",
+              "name":"Bitcoin",
+              "fiat":false
+            }
+          }
+          '''
+          ..respStatusCode = 200
+          ..wantRes = btc,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Poorly formatted response, throws error" // {{{
+          ..methodName = "fetchAsset"
+          ..posArgs = ["btc"]
+          ..setDomain = _testApiDomain
+          ..setApiKey = _testApiKey
+          ..wantPath = "/assets/btc"
+          ..wantHeaders = {"X-CW-API-Key": _testApiKey}
+          ..respJson = '''
+          {
+            "result": {
+              "id":"NaN",
+              "symbol":"btc",
+              "name":"Bitcoin",
+              "fiat":false
+            }
+          }
+          '''
+          ..respStatusCode = 200
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected int field id, instead got String(NaN)",
+          )
+
         // }}}
       ];
 
-    return _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testSet);
   }
 
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
@@ -155,19 +355,40 @@ class restApiClientTestSuite {
         var methodSym = mirrors.MirrorSystem.getSymbol(tc.methodName);
 
         {
-          var mockHttpClient = httpTesting.MockClient((http.Request req) {
-            testing.expect(req.url.toString(), testing.equals(tc.wantUrl));
+          var domain = tc.setDomain;
+          domain ??= _testApiDomain;
 
-            if (req.url.toString() != tc.wantUrl) {
+          var path = tc.wantPath;
+          if (path[0] != "/") {
+            path = "/" + path;
+          }
+
+          var wantUrl = "https://${domain}${path}";
+
+          var mockHttpClient = httpTesting.MockClient((http.Request req) {
+            testing.expect(req.url.toString(), testing.equals(wantUrl));
+
+            if (req.url.toString() != wantUrl) {
               return Future.value(http.Response("Not Found", 404));
             }
+
+            var wantHeaders = {
+              // This header is always included by default
+              "User-Agent": "infinityCounter/cw-sdk-dart@${sdk.version}",
+            };
+
+            tc.wantHeaders.forEach((k, v) {
+              wantHeaders[k] = v;
+            });
+
+            testing.expect(req.headers, testing.equals(wantHeaders));
 
             return Future.value(http.Response(tc.respJson, tc.respStatusCode));
           });
 
           var apiClient = sdk.RestApiClient(
             httpClient: mockHttpClient,
-            apiDomain: tc.setDomain,
+            apiDomain: domain,
             apiKey: tc.setApiKey,
           );
 
@@ -184,15 +405,27 @@ class restApiClientTestSuite {
             });
           }
 
-          var resMir = clientMirror.invoke(methodSym, tc.posArgs, namedArgs);
-          var gotRes = resMir.reflectee;
-
-          if (gotRes is Future) {
-            Future resFuture = gotRes;
-            gotRes = await resFuture;
+          var posArgs = List();
+          if (tc.posArgs != null) {
+            posArgs.addAll(tc.posArgs);
           }
 
-          testing.expect(gotRes, testing.equals(tc.wantRes));
+          var resMir = clientMirror.invoke(methodSym, posArgs, namedArgs);
+          if (tc.wantException != null) {
+            testing.expect(
+              resMir.reflectee,
+              testing.throwsA(testing.predicate((e) => e == tc.wantException)),
+            );
+          } else {
+            var gotRes = resMir.reflectee;
+
+            if (gotRes is Future) {
+              Future resFuture = resMir.reflectee;
+              gotRes = await resFuture;
+            }
+
+            testing.expect(gotRes, testing.equals(tc.wantRes));
+          }
         });
       }
     });
