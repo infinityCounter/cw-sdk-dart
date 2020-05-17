@@ -25,7 +25,7 @@ class restApiClientTestCase {
   var wantException;
 }
 
-class restApiClientTestSet {
+class restApiClientTestGroup {
   String testGroupName;
 
   List<restApiClientTestCase> cases = [];
@@ -47,7 +47,7 @@ class restApiClientTestSuite {
       ..symbol = "bitfinex"
       ..active = true;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test throwing exceptions for status codes"
       ..cases = [
         restApiClientTestCase()
@@ -101,7 +101,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchAssets() {
@@ -123,7 +123,7 @@ class restApiClientTestSuite {
       ..name = "United States Dollar"
       ..fiat = true;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchAssets"
       ..cases = [
         restApiClientTestCase()
@@ -179,7 +179,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchAsset() {
@@ -189,7 +189,7 @@ class restApiClientTestSuite {
       ..name = "Bitcoin"
       ..fiat = false;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchAsset"
       ..cases = [
         restApiClientTestCase()
@@ -243,7 +243,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchPairs() {
@@ -284,7 +284,7 @@ class restApiClientTestSuite {
       ..quote = usd
       ..futuresContractPeriod = "perpetual";
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchPairs"
       ..cases = [
         restApiClientTestCase()
@@ -373,7 +373,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchPair() {
@@ -402,7 +402,7 @@ class restApiClientTestSuite {
       ..quote = usd
       ..futuresContractPeriod = "perpetual";
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchPair"
       ..cases = [
         restApiClientTestCase()
@@ -528,11 +528,11 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchPairVwap() {
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchPairVwap"
       ..cases = [
         restApiClientTestCase()
@@ -564,7 +564,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchExchanges() {
@@ -586,7 +586,7 @@ class restApiClientTestSuite {
       ..symbol = "quadriga"
       ..active = false;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchExchanges"
       ..cases = [
         restApiClientTestCase()
@@ -642,7 +642,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchExchange() {
@@ -652,7 +652,7 @@ class restApiClientTestSuite {
       ..symbol = "bitfinex"
       ..active = true;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchExchanges"
       ..cases = [
         restApiClientTestCase()
@@ -702,7 +702,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchMarkets() {
@@ -724,7 +724,7 @@ class restApiClientTestSuite {
       ..pair = "xtzbtc-quarterly-futures"
       ..active = false;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchMarkets"
       ..cases = [
         restApiClientTestCase()
@@ -806,7 +806,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchMarket() {
@@ -816,7 +816,7 @@ class restApiClientTestSuite {
       ..pair = "btcusd"
       ..active = true;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchMarket"
       ..cases = [
         restApiClientTestCase()
@@ -885,7 +885,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchOrderBook() {
@@ -913,7 +913,7 @@ class restApiClientTestSuite {
       ..price = 9085
       ..amount = 0.1;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchOrderBook"
       ..cases = [
         restApiClientTestCase()
@@ -1052,7 +1052,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchCandles() {
@@ -1136,7 +1136,7 @@ class restApiClientTestSuite {
           ..volumeQuote = 3760,
       ],
     };
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchCandles"
       ..cases = [
         restApiClientTestCase()
@@ -1274,7 +1274,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchSummary() {
@@ -1287,7 +1287,7 @@ class restApiClientTestSuite {
       ..volumeBase = 3980.669
       ..volumeQuote = 37500000;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchSummary"
       ..cases = [
         restApiClientTestCase()
@@ -1393,11 +1393,11 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchMarketPrice() {
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchMarketPrice"
       ..cases = [
         restApiClientTestCase()
@@ -1438,7 +1438,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static void _test_fetchTrades() {
@@ -1466,7 +1466,7 @@ class restApiClientTestSuite {
       ..price = 9001.7
       ..amount = 1;
 
-    var testSet = restApiClientTestSet()
+    var testGroup = restApiClientTestGroup()
       ..testGroupName = "Test fetchTrades"
       ..cases = [
         restApiClientTestCase()
@@ -1549,7 +1549,7 @@ class restApiClientTestSuite {
         // }}}
       ];
 
-    _runRestApiClientTestSet(testSet);
+    _runRestApiClientTestSet(testGroup);
   }
 
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
@@ -1580,7 +1580,7 @@ class restApiClientTestSuite {
     return testFuncIMs;
   }
 
-  static _runRestApiClientTestSet(restApiClientTestSet testSet) {
+  static _runRestApiClientTestSet(restApiClientTestGroup testSet) {
     if (testSet.cases.length == 0) {
       return;
     }
