@@ -823,6 +823,90 @@ class restApiClientTestSuite {
     _runRestApiClientTestSet(testSet);
   }
 
+  static void _test_fetchMarket() {
+    var bitfinexBtcUsd = sdk.Market()
+      ..id = 1
+      ..exchange = "bitfinex"
+      ..pair = "btcusd"
+      ..active = true;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchMarket"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching markets, Ok" // {{{
+          ..methodName = "fetchMarket"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 1,
+              "exchange": "bitfinex",
+              "pair": "btcusd",
+              "active": true
+            }
+          }
+          '''
+          ..wantRes = bitfinexBtcUsd,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange for market not found" // {{{
+          ..methodName = "fetchMarket"
+          ..posArgs = ["foo", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/foo/btcusd"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair for market not found" // {{{
+          ..methodName = "fetchMarket"
+          ..posArgs = ["bitfinex", "barbaz"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/barbaz"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (result is not Map)" // {{{
+          ..methodName = "fetchMarket"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd"
+          ..respJson = '{"result": []}'
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Map<String, dynamic> field result, instead got List<dynamic>([])",
+          ),
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (exchange is int)" // {{{
+          ..methodName = "fetchMarket"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..setDomain = _testApiDomain
+          ..wantPath = "/markets/bitfinex/btcusd"
+          ..respJson = '''
+          {
+            "result": {
+              "id": 1,
+              "exchange": 42,
+              "pair": "btcusd",
+              "active": true
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected String field exchange, instead got int(42)",
+          )
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
   static List<mirrors.InstanceMirror> _getAllTestFuncInstanceMirrors() {
     var testFuncIMs = List<mirrors.InstanceMirror>();
 
