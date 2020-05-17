@@ -155,7 +155,6 @@ class restApiClientTestSuite {
             }]
           }
           '''
-          ..respStatusCode = 200
           ..wantRes = [btc, eth, usd],
         // }}}
         restApiClientTestCase()
@@ -164,8 +163,7 @@ class restApiClientTestSuite {
           ..setDomain = _testApiDomain
           ..wantPath = "/assets"
           ..respJson = '{"result": []}'
-          ..respStatusCode = 200
-          ..wantRes = [],
+          ..wantRes = <sdk.Asset>[],
         // }}}
         restApiClientTestCase()
           ..descr = "Malformed asset in list" // {{{
@@ -182,7 +180,6 @@ class restApiClientTestSuite {
             }]
           }
           '''
-          ..respStatusCode = 200
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected String field symbol, instead got Null(null)",
           ),
@@ -244,7 +241,6 @@ class restApiClientTestSuite {
             }
           }
           '''
-          ..respStatusCode = 200
           ..wantRes = btc,
         // }}}
         restApiClientTestCase()
@@ -263,7 +259,6 @@ class restApiClientTestSuite {
             }
           }
           '''
-          ..respStatusCode = 200
           ..wantRes = btc,
         // }}}
         restApiClientTestCase()
@@ -284,7 +279,6 @@ class restApiClientTestSuite {
             }
           }
           '''
-          ..respStatusCode = 200
           ..wantRes = btc,
         // }}}
         restApiClientTestCase()
@@ -305,12 +299,143 @@ class restApiClientTestSuite {
             }
           }
           '''
-          ..respStatusCode = 200
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected int field id, instead got String(NaN)",
           )
 
         // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_FetchPairs() {
+    var btc = sdk.Asset()
+      ..id = 60
+      ..symbol = "btc"
+      ..name = "Bitcoin"
+      ..fiat = false;
+
+    var eth = sdk.Asset()
+      ..id = 77
+      ..symbol = "eth"
+      ..name = "Ethereum"
+      ..fiat = false;
+
+    var usd = sdk.Asset()
+      ..id = 98
+      ..symbol = "usd"
+      ..name = "United States Dollar"
+      ..fiat = true;
+
+    var btcusd = sdk.Pair()
+      ..id = 9
+      ..symbol = "btcusd"
+      ..base = btc
+      ..quote = usd;
+
+    var ethusd = sdk.Pair()
+      ..id = 125
+      ..symbol = "ethusd"
+      ..base = eth
+      ..quote = usd;
+
+    var btcusdPerpFuture = sdk.Pair()
+      ..id = 175
+      ..symbol = "btcusd-perpetual-futures"
+      ..base = btc
+      ..quote = usd
+      ..futuresContractPeriod = "perpetual";
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test Fetch Pairs"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching pairs from API" // {{{
+          ..methodName = "fetchPairs"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs"
+          ..respJson = '''
+          {
+            "result": [{
+              "id": 9,
+              "symbol": "btcusd",
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              }
+            },{
+              "id": 125,
+              "symbol": "ethusd",
+              "base": {
+                "id": 77,
+                "symbol": "eth",
+                "name": "Ethereum",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              }
+            },{
+              "id": 175,
+              "symbol": "btcusd-perpetual-futures",
+              "base": {
+                "id": 60,
+                "symbol": "btc",
+                "name": "Bitcoin",
+                "fiat": false
+              },
+              "quote": {
+                "id": 98,
+                "symbol": "usd",
+                "name": "United States Dollar",
+                "fiat": true
+              },
+              "futuresContractPeriod": "perpetual"
+            }]
+          }
+          '''
+          ..wantRes = [btcusd, ethusd, btcusdPerpFuture],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Empty list of results" // {{{
+          ..methodName = "fetchPairs"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs"
+          ..respJson = '{"result": []}'
+          ..wantRes = <sdk.Pair>[],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed pair in list" // {{{
+          ..methodName = "fetchPairs"
+          ..setDomain = _testApiDomain
+          ..wantPath = "/pairs"
+
+          // FetchPairs is expecting an array, not an object
+          ..respJson = '''
+          {
+            "result": {
+              "id":60,
+              "symbol":"btc",
+              "name":"Bitcoin",
+              "fiat":false
+            }
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected Iterable field result, instead got _InternalLinkedHashMap<String, dynamic>({id: 60, symbol: btc, name: Bitcoin, fiat: false})",
+          )
       ];
 
     _runRestApiClientTestSet(testSet);
@@ -383,7 +508,10 @@ class restApiClientTestSuite {
 
             testing.expect(req.headers, testing.equals(wantHeaders));
 
-            return Future.value(http.Response(tc.respJson, tc.respStatusCode));
+            var statusCode = tc.respStatusCode;
+            statusCode ??= 200;
+
+            return Future.value(http.Response(tc.respJson, statusCode));
           });
 
           var apiClient = sdk.RestApiClient(

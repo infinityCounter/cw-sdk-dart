@@ -41,7 +41,7 @@ UnexpectedResponseFormatException _buildExceptionWrongIndexType(
 
 UnexpectedResponseFormatException _buildResponseBodyNotMapException(got) {
   return UnexpectedResponseFormatException(
-    "expected API response body to be of type Map<String, dynamic>, instead got ${got.runtimeType}(${got})",
+    "expected API response body to be JSON Map, instead got ${got.runtimeType}(${got})",
   );
 }
 

@@ -50,6 +50,7 @@ common.Pair _parsePair(Map<String, dynamic> props) {
 
   return common.Pair()
     ..id = id
+    ..symbol = symbol
     ..base = base
     ..quote = quote
     ..futuresContractPeriod = futuresContractPeriod;
