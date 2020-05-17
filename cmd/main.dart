@@ -16,6 +16,7 @@ main() {
   futures.add(apiClient.fetchMarkets("kraken"));
   futures.add(apiClient.fetchAsset("btc"));
   futures.add(apiClient.fetchPair("btcusd"));
+  futures.add(apiClient.fetchPairVwap("btcusd"));
   futures.add(apiClient.fetchExchange("bitfinex"));
   futures.add(apiClient.fetchMarket("bitfinex", "btcusd"));
   futures.add(apiClient.fetchOrderBookSnapshot("bitfinex", "btcusd"));
@@ -43,14 +44,15 @@ main() {
     var krakenMarkets = results[4];
     var btc = results[5];
     var btcusd = results[6];
-    var bitfinex = results[7];
-    var bitfinexBtcUsd = results[8];
-    var snapshot = results[9];
+    var btcusdVwap = results[7];
+    var bitfinex = results[8];
+    var bitfinexBtcUsd = results[9];
+    var snapshot = results[10];
     var book = sdk.OrderBook.fromSnapshot(snapshot);
-    var candles = results[10];
-    var summary = results[11];
-    var price = results[12];
-    var trades = results[13];
+    var candles = results[11];
+    var summary = results[12];
+    var price = results[13];
+    var trades = results[14];
 
     // for (var a in assets) {
     //   print(a);
@@ -74,6 +76,7 @@ main() {
 
     // print(btc);
     // print(btcusd);
+    // print(btcusdVwap);
     // print(bitfinex);
     // print(bitfinexBtcUsd);
     // print(snapshot);

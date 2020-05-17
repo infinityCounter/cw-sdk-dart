@@ -135,6 +135,33 @@ class RestApiClient {
     return ret;
   }
 
+  /// Returns a Future that resolves to the vwap for the pair with symbol [sym].
+  Future<num> fetchPairVwap(String sym) {
+    var ret = Future(() {
+      var respFuture = this._doApiRequest(
+        "pairs/${Uri.encodeComponent(sym)}/vwap",
+      );
+
+      return respFuture.then((resp) {
+        if (resp.statusCode == _statusCodeNotFound) {
+          return null;
+        }
+
+        var unparsedPrice = _getResultAsMap(resp.body);
+
+        var vwap = unparsedPrice["vwap"];
+        if (vwap is! num) {
+          throw _buildExceptionWrongFieldType("vwap", "num", vwap);
+        }
+
+        num vwapAsNum = vwap;
+        return vwapAsNum;
+      });
+    });
+
+    return ret;
+  }
+
   /// Returns a Future that resolves to an iterable collection of all exchanges.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
