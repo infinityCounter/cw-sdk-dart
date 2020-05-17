@@ -4,8 +4,6 @@ class PublicOrder {
   num price = 0;
   num amount = 0;
 
-  PublicOrder([this.price, this.amount]);
-
   /// Aggregates orders of the same price.
   ///
   /// It returns a PublicOrder with the same price as [this] and [o],
@@ -15,7 +13,9 @@ class PublicOrder {
       throw "incompatible operands, orders must have same price but ${this.price} != ${o.price}";
     }
 
-    return PublicOrder(this.price, this.amount + o.amount);
+    return PublicOrder()
+      ..price = this.price
+      ..amount = this.amount + o.amount;
   }
 
   /// Decrements the amount of an order.
@@ -27,7 +27,9 @@ class PublicOrder {
       throw "incompatible operands, orders must have same price but ${this.price} != ${o.price}";
     }
 
-    return PublicOrder(this.price, this.amount - o.amount);
+    return PublicOrder()
+      ..price = this.price
+      ..amount = this.amount - o.amount;
   }
 
   toString() {
@@ -79,7 +81,9 @@ Iterable<PublicOrder> aggregatePublicOrders(
       co.amount += o.amount;
       aggOrders[lvl] = co;
     } else {
-      aggOrders[lvl] = PublicOrder(lvl, o.amount);
+      aggOrders[lvl] = PublicOrder()
+        ..price = lvl
+        ..amount = o.amount;
     }
   }
 

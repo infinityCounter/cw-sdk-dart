@@ -129,7 +129,9 @@ common.PublicOrder _parsePublicOrder(Iterable props) {
     throw _buildExceptionWrongIndexType(1, "num", amount);
   }
 
-  return common.PublicOrder(price, amount);
+  return common.PublicOrder()
+    ..price = price
+    ..amount = amount;
 }
 
 Iterable<common.PublicOrder> _parsePublicOrders(Iterable unparsedOrders) {
@@ -280,7 +282,7 @@ common.PublicTrade _parsePublicTrade(Iterable props) {
     );
   }
 
-  var id = props.elementAt(1);
+  var id = props.elementAt(0);
   if (id is! int) {
     throw _buildExceptionWrongIndexType(0, "int", id);
   }

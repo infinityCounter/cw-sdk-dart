@@ -889,6 +889,30 @@ class restApiClientTestSuite {
   }
 
   static void _test_fetchOrderBook() {
+    var ask1 = sdk.PublicOrder()
+      ..price = 9100
+      ..amount = 0.1;
+
+    var ask2 = sdk.PublicOrder()
+      ..price = 9105
+      ..amount = 0.2;
+
+    var ask3 = sdk.PublicOrder()
+      ..price = 9110
+      ..amount = 1;
+
+    var bid1 = sdk.PublicOrder()
+      ..price = 9095
+      ..amount = 1;
+
+    var bid2 = sdk.PublicOrder()
+      ..price = 9090
+      ..amount = 0.2;
+
+    var bid3 = sdk.PublicOrder()
+      ..price = 9085
+      ..amount = 0.1;
+
     var testSet = restApiClientTestSet()
       ..testGroupName = "Test fetchOrderBook"
       ..cases = [
@@ -915,16 +939,8 @@ class restApiClientTestSuite {
           }
           '''
           ..wantRes = sdk.OrderBook(
-            [
-              sdk.PublicOrder(9100, 0.1),
-              sdk.PublicOrder(9105, 0.2),
-              sdk.PublicOrder(9110, 1),
-            ],
-            [
-              sdk.PublicOrder(9095, 1),
-              sdk.PublicOrder(9090, 0.2),
-              sdk.PublicOrder(9085, 0.1),
-            ],
+            [ask1, ask2, ask3],
+            [bid1, bid2, bid3],
             20,
           ),
         // }}}
@@ -1132,91 +1148,19 @@ class restApiClientTestSuite {
           {
             "result": {
               "60": [
-                [
-                  1589627580,
-                  9400,
-                  9450,
-                  9400,
-                  9440,
-                  0.1,
-                  943
-                ],
-                [
-                  1589627640,
-                  9440,
-                  9440,
-                  9420,
-                  9420,
-                  0.2,
-                  1800
-                  ],
-                [
-                  1589627700,
-                  9420,
-                  9480,
-                  9410,
-                  9450,
-                  0.15,
-                  1250
-                  ]
+                [1589627580,9400,9450,9400,9440,0.1,943],
+                [1589627640,9440,9440,9420,9420,0.2,1800],
+                [1589627700,9420,9480,9410,9450,0.15,1250]
               ],
               "180": [
-                [
-                  1589507820,
-                  9350,
-                  9390,
-                  9340,
-                  9370,
-                  1,
-                  9350
-                ],
-                [
-                  1589628000,
-                  9370,
-                  9400,
-                  9360,
-                  9370,
-                  0.2,
-                  1800
-                ],
-                [
-                  1589628180,
-                  9370,
-                  9370,
-                  9310,
-                  9310,
-                  0.5,
-                  4670
-                ]
+                [1589507820,9350,9390,9340,9370,1,9350],
+                [1589628000,9370,9400,9360,9370,0.2,1800],
+                [1589628180,9370,9370,9310,9310,0.5,4670]
               ],
               "300": [
-                [
-                  1589388000,
-                  9400,
-                  9480,
-                  9250,
-                  9280,
-                  2.5,
-                  24500
-                ],
-                [
-                  1589388300,
-                  9280,
-                  9280,
-                  9250,
-                  9250,
-                  1.8,
-                  18000
-                ],
-                [
-                  1589388600,
-                  9250,
-                  9350,
-                  9250,
-                  9300,
-                  0.4,
-                  3760
-                ]
+                [1589388000,9400,9480,9250,9280,2.5,24500],
+                [1589388300,9280,9280,9250,9250,1.8,18000],
+                [1589388600,9250,9350,9250,9300,0.4,3760]
               ]
             }
           }
@@ -1242,26 +1186,10 @@ class restApiClientTestSuite {
           {
             "result": {
               "180": [
-                [
-                  1589628180,
-                  9370,
-                  9370,
-                  9310,
-                  9310,
-                  0.5,
-                  4670
-                ]
+                [1589628180,9370,9370,9310,9310,0.5,4670]
               ],
               "300": [
-                [
-                  1589388000,
-                  9400,
-                  9480,
-                  9250,
-                  9280,
-                  2.5,
-                  24500
-                ]
+                [1589388000,9400,9480,9250,9280,2.5,24500]
               ]
             }
           }
@@ -1308,15 +1236,7 @@ class restApiClientTestSuite {
           {
             "result": {
               "180": [
-                [
-                  "NaN",
-                  9370,
-                  9370,
-                  9310,
-                  9310,
-                  0.5,
-                  4670
-                ]
+                ["NaN",9370,9370,9310,9310,0.5,4670]
               ]
             }
           }
@@ -1514,6 +1434,117 @@ class restApiClientTestSuite {
           ..respJson = '{"result": {"price": "NaN"}}'
           ..wantException = sdk.UnexpectedResponseFormatException(
             "expected num field price, instead got String(NaN)",
+          ),
+        // }}}
+      ];
+
+    _runRestApiClientTestSet(testSet);
+  }
+
+  static void _test_fetchTrades() {
+    var trade1 = sdk.PublicTrade()
+      ..id = 1
+      ..timestamp = 1589388000
+      ..price = 9000
+      ..amount = 0.1;
+
+    var trade2 = sdk.PublicTrade()
+      ..id = 2
+      ..timestamp = 1589388060
+      ..price = 8750
+      ..amount = 0.5;
+
+    var trade3 = sdk.PublicTrade()
+      ..id = 3
+      ..timestamp = 1589388120
+      ..price = 8990.5
+      ..amount = 0.2;
+
+    var trade4 = sdk.PublicTrade()
+      ..id = 4
+      ..timestamp = 1589388180
+      ..price = 9001.7
+      ..amount = 1;
+
+    var testSet = restApiClientTestSet()
+      ..testGroupName = "Test fetchTrades"
+      ..cases = [
+        restApiClientTestCase()
+          ..descr = "Fetching candles, Ok" // {{{
+          ..methodName = "fetchTrades"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/trades"
+          ..respJson = '''
+          {
+            "result": [
+              [1, 1589388000, 9000, 0.1],
+              [2, 1589388060, 8750, 0.5],
+              [3, 1589388120, 8990.5, 0.2],
+              [4, 1589388180, 9001.7, 1]
+            ]
+          }
+          '''
+          ..wantRes = [trade1, trade2, trade3, trade4],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Use Filter Params" // {{{
+          ..methodName = "fetchTrades"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..namedArgs = {
+            "since": 1589388000,
+            "limit": 3,
+          }
+          ..wantPath = "/markets/bitfinex/btcusd/trades"
+          ..wantParams = {
+            "since": "1589388000",
+            "limit": "3",
+          }
+          ..respJson = '''
+          {
+            "result": [
+              [2, 1589388060, 8750, 0.5],
+              [3, 1589388120, 8990.5, 0.2],
+              [4, 1589388180, 9001.7, 1]
+            ]
+          }
+          '''
+          ..wantRes = [trade2, trade3, trade4],
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Exchange for market not found" // {{{
+          ..methodName = "fetchTrades"
+          ..posArgs = ["foo", "btcusd"]
+          ..wantPath = "/markets/foo/btcusd/trades"
+          ..respJson = '{"error": "Exchange not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Pair for market not found" // {{{
+          ..methodName = "fetchTrades"
+          ..posArgs = ["bitfinex", "barbaz"]
+          ..wantPath = "/markets/bitfinex/barbaz/trades"
+          ..respJson = '{"error": "Instrument not found"}'
+          ..respStatusCode = 404
+          ..wantRes = null,
+        // }}}
+        restApiClientTestCase()
+          ..descr = "Malformed response (timestamp is NaN)" // {{{
+          ..methodName = "fetchTrades"
+          ..posArgs = ["bitfinex", "btcusd"]
+          ..wantPath = "/markets/bitfinex/btcusd/trades"
+          ..respJson = '''
+          {
+            "result": [
+              [1, 1589388000, 9000, 0.1],
+              [2, 1589388060, 8750, 0.5],
+              [3, "NaN", 8990.5, 0.2],
+              [4, 1589388180, 9001.7, 1]
+            ]
+          }
+          '''
+          ..wantException = sdk.UnexpectedResponseFormatException(
+            "expected element 1 of array to be of type int, instead got String(NaN)",
           ),
         // }}}
       ];

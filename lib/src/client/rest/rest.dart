@@ -41,6 +41,10 @@ class RestApiClient {
 
   Future<http.Response> _doApiRequest(String path,
       [Map<String, String> params]) {
+    if (params != null && params.length == 0) {
+      params = null;
+    }
+
     var endpoint = Uri.https(this._apiDomain, path, params);
     var headers = {
       "User-Agent": "infinityCounter/cw-sdk-dart@${version}",
@@ -298,10 +302,6 @@ class RestApiClient {
 
       if (after != null) {
         params["after"] = after.toString();
-      }
-
-      if (params.length == 0) {
-        params = null;
       }
 
       exchangeSym = Uri.encodeComponent(exchangeSym);
