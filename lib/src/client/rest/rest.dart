@@ -205,7 +205,7 @@ class RestApiClient {
 
   /// Returns a Future that resolves to an iterable collection of all markets.
   ///
-  /// If the [exchangeSym] argument is set, only markets for that exchange will be included
+  /// If the [exchange] argument is set, only markets for that exchange will be included
   /// in the response.
   Future<List<common.Market>> fetchMarkets({String exchange}) {
     var ret = Future(() {

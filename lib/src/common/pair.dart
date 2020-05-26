@@ -1,12 +1,28 @@
 part of common;
 
+/// A pair represents an instrument traded on an Exchange.
+///
+/// It is composed of at minimum two underlying assets,
+/// however a Derivative pair might have other properties set.
 class Pair {
+  /// The unique identifier used by Cryptowatch.
   int id;
 
+  /// The base asset of the pair.
+  ///
+  /// Example: In the pair BTCUSD the base is Bitcoin(BTC).
   Asset base;
+
+  /// The quote asset of the pair.
+  ///
+  /// Example: In the pair BTCUSD the quote is United States Dollar(USD).
   Asset quote;
 
+  /// The unique symbol used to identify the pair by Cryptowatch.
   String symbol;
+
+  /// The settlement period of the contract. This is only set if
+  /// the pair is a Future.
   String futuresContractPeriod;
 
   toString() {

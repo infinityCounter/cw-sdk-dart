@@ -1,11 +1,17 @@
 part of common;
 
+/// An asset is something that is traded, like a crypto or fiat currency.
 class Asset {
+  /// The unique identifier used by Cryptowatch.
   int id;
 
+  /// The name of the asset.
   String name;
+
+  /// The unique symbol used to identify the asset by Cryptowatch.
   String symbol;
 
+  /// A boolean indicating if the asset is a fiat or not.
   bool fiat;
 
   toString() {

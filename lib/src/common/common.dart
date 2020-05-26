@@ -1,6 +1,7 @@
 library common;
 
-import 'dart:convert' as convert show jsonEncode;
+/// Library defines classes and exceptions used to represent
+/// Cryptowatch API entities.
 
 import 'package:quiver/core.dart' as quiver
     show hash2, hash3, hash4, hashObjects;

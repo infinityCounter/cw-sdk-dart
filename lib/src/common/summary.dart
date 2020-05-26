@@ -1,14 +1,26 @@
 part of common;
 
+/// A Summary is a 24 hour sliding window of a Market's metrics.
 class Summary {
+  /// The highest price of the Market within 24hrs.
   num high = 0;
+
+  /// The lowest price of the Market within 24hrs.
   num low = 0;
+
+  /// The last price at which a trade happened for the Market.
   num last = 0;
 
+  /// The difference between the last price and the price 24hrs ago.
   num changeAbsolute = 0;
+
+  /// The percentage increase in the price of the Market compared to 24hrs ago.
   num changePercentage = 0;
 
+  /// The total volume of all trades that occurred within the previous 24hrs, in the base asset.
   num volumeBase = 0;
+
+  /// The total volume of all trades that occurred within the previous 24hrs, in the quote asset.
   num volumeQuote = 0;
 
   toString() {

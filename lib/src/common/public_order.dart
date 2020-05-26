@@ -1,7 +1,12 @@
 part of common;
 
+/// A PublicOrder is an offer to buy or sell some amount of an asset
+/// at a specific price.
 class PublicOrder {
+  /// The price at which the offer is being made to buy/sell the asset.
   num price = 0;
+
+  /// The amount of the asset which is being sold/bought.
   num amount = 0;
 
   /// Aggregates orders of the same price.
@@ -36,6 +41,7 @@ class PublicOrder {
     return "PublicOrder(price=${this.price}, amount=${this.amount})";
   }
 
+  // Just her eso that
   List<num> _toJson() {
     return [this.price, this.amount];
   }
@@ -46,6 +52,7 @@ class PublicOrder {
   get hashCode => quiver.hash2(this.price, this.amount);
 }
 
+// sort public orders in either ascending (default) or descending price order.
 sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
   orders.sort((a, b) {
     if (a.price < b.price) {
@@ -58,6 +65,12 @@ sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
   });
 }
 
+// aggregates orders at certain price levels.
+//
+// Example:
+// orders = [PublicOrder(10, 1),PublicOrder(20, 7),PublicOrder(70, 8)]
+// aggLevel = 20
+// -> {20:PublicOrder(20,8) 60:PublicOrder(70,8)}
 Iterable<PublicOrder> aggregatePublicOrders(
     Iterable<PublicOrder> orders, num aggLevel) {
   var aggOrders = Map<num, PublicOrder>();
