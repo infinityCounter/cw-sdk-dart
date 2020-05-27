@@ -1,3 +1,6 @@
 .dart_tool
-.vscode
 .packages
+.vscode
+build/
+doc/api/
+pubspec.lock

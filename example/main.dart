@@ -1,5 +1,7 @@
 library cmd;
 
+// Just some simple examples on how the RestApiClient is expected to be used.
+
 import 'dart:io' as io;
 
 import 'package:cw_sdk_dart/cw_sdk_dart.dart' as sdk

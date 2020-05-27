@@ -10,7 +10,7 @@ import '../../version/version.dart' show version;
 part 'helpers.dart';
 part 'exceptions.dart';
 
-// defaultApiDomain is the current (as of May 1, 2020) production domain for Cryptowatch's REST API.
+/// The current (as of May 1, 2020) production domain for Cryptowatch's REST API.
 const defaultApiDomain = "api.cryptowat.ch";
 
 const _apiKeyHeader = "X-CW-API-Key";
@@ -19,7 +19,8 @@ const _statusCodeNotFound = 404;
 const _statusCodeTooManyRequests = 429;
 const _statusCodeInternalServerError = 500;
 
-/// RestApiClient provides an interface for interacting with the Cryptowatch REST API.
+/// RestApiClient is an API client for the Cryptowatch REST API.
+///
 ///
 /// The methods implemented by this class all return a Future object instead of the actual
 /// result. CW API docs available at: https://docs.cryptowat.ch/rest-api/

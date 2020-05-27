@@ -1,6 +1,6 @@
 # Cryptowatch Dart SDK
 
-This is an unofficial Cryptowatch SDK implemented in Dart. It provides a set of APIs to interact with the Cryptowatch REST API. Currently in alpha.
+An unofficial Cryptowatch SDK implemented in Dart. Currently in alpha support is just limited to the Cryptowatch REST API.
 
 ## API documentation:
 
