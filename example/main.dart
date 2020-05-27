@@ -56,37 +56,37 @@ main() {
     var price = results[13];
     var trades = results[14];
 
-    // for (var a in assets) {
-    //   print(a);
-    // }
+    for (var a in assets) {
+      print(a);
+    }
 
-    // for (var p in pairs) {
-    //   print(p);
-    // }
+    for (var p in pairs) {
+      print(p);
+    }
 
-    // for (var e in exchanges) {
-    //   print(e);
-    // }
+    for (var e in exchanges) {
+      print(e);
+    }
 
-    // for (var m in markets) {
-    //   print(m);
-    // }
+    for (var m in markets) {
+      print(m);
+    }
 
-    // for (var m in krakenMarkets) {
-    //   print(m);
-    // }
+    for (var m in krakenMarkets) {
+      print(m);
+    }
 
-    // print(btc);
-    // print(btcusd);
-    // print(btcusdVwap);
-    // print(bitfinex);
-    // print(bitfinexBtcUsd);
-    // print(snapshot);
-    // print(book.aggregatedSnapshot(10000));
-    // print(candles);
-    // print(summary);
-    // print(price);
-    // print(trades);
+    print(btc);
+    print(btcusd);
+    print(btcusdVwap);
+    print(bitfinex);
+    print(bitfinexBtcUsd);
+    print(snapshot);
+    print(book.aggregatedSnapshot(10000));
+    print(candles);
+    print(summary);
+    print(price);
+    print(trades);
 
     io.exit(0);
   }, onError: (e) {
