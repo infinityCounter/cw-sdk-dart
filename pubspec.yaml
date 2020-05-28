@@ -1,6 +1,6 @@
 name: cw_sdk_dart
-version: 0.1.0-alpha.1
-description: An unofficial sdk for the Cryptowatch API.
+version: 0.1.0-alpha.2
+description: An unofficial sdk for the Cryptowatch API, currently in alpha. Features full support for the REST API.
 homepage: https://github.com/infinitycounter/cw-sdk-dart
 
 environment:
