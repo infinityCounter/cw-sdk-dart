@@ -49,8 +49,7 @@ main() {
     var btcusdVwap = results[7];
     var bitfinex = results[8];
     var bitfinexBtcUsd = results[9];
-    var snapshot = results[10];
-    var book = sdk.OrderBook.fromSnapshot(snapshot);
+    var book = results[10];
     var candles = results[11];
     var summary = results[12];
     var price = results[13];
@@ -81,7 +80,7 @@ main() {
     print(btcusdVwap);
     print(bitfinex);
     print(bitfinexBtcUsd);
-    print(snapshot);
+    print(book.snapshot);
     print(book.aggregatedSnapshot(10000));
     print(candles);
     print(summary);
