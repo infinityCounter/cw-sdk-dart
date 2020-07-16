@@ -40,11 +40,8 @@ class RestApiClient {
     this._httpClient = httpClient;
   }
 
-  /// Returns a Future that resolves to an HTTP response.
-  ///
-  /// This method may be used to extend the API client.
-  Future<http.Response> doApiRequest(String path,
-      {Map<String, String> params}) {
+  Future<http.Response> _doApiRequest(String path,
+      [Map<String, String> params]) {
     if (params != null && params.length == 0) {
       params = null;
     }
@@ -74,7 +71,7 @@ class RestApiClient {
   /// Returns a Future that resolves to an iterable collection of all assets.
   Future<Iterable<common.Asset>> fetchAssets() {
     var ret = Future(() {
-      var respFuture = this.doApiRequest("assets");
+      var respFuture = this._doApiRequest("assets");
       return respFuture.then((resp) {
         var unparsedAssetList = _getResultAsIterable(resp.body);
         var assetList = List<common.Asset>();
@@ -93,7 +90,7 @@ class RestApiClient {
   /// Returns a Future that resolves to the asset with symbol [sym].
   Future<common.Asset> fetchAsset(String sym) {
     var ret = Future(() {
-      var respFuture = this.doApiRequest("assets/${Uri.encodeComponent(sym)}");
+      var respFuture = this._doApiRequest("assets/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
           return null;
@@ -110,7 +107,7 @@ class RestApiClient {
   /// Returns a Future that resolves to an iterable collection of all asset pairs.
   Future<Iterable<common.Pair>> fetchPairs() {
     var ret = Future(() {
-      var respFuture = this.doApiRequest("pairs");
+      var respFuture = this._doApiRequest("pairs");
       return respFuture.then((resp) {
         var unparsedPairList = _getResultAsIterable(resp.body);
         var pairList = List<common.Pair>();
@@ -129,7 +126,7 @@ class RestApiClient {
   /// Returns a Future that resolves to the pair with symbol [sym].
   Future<common.Pair> fetchPair(String sym) {
     var ret = Future(() {
-      var respFuture = this.doApiRequest("pairs/${Uri.encodeComponent(sym)}");
+      var respFuture = this._doApiRequest("pairs/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
           return null;
@@ -146,7 +143,7 @@ class RestApiClient {
   /// Returns a Future that resolves to the vwap for the pair with symbol [sym].
   Future<num> fetchPairVwap(String sym) {
     var ret = Future(() {
-      var respFuture = this.doApiRequest(
+      var respFuture = this._doApiRequest(
         "pairs/${Uri.encodeComponent(sym)}/vwap",
       );
 
@@ -173,7 +170,7 @@ class RestApiClient {
   /// Returns a Future that resolves to an iterable collection of all exchanges.
   Future<List<common.Exchange>> fetchExchanges() {
     var ret = Future(() {
-      var respFuture = this.doApiRequest("exchanges");
+      var respFuture = this._doApiRequest("exchanges");
       return respFuture.then((resp) {
         var unparsedExchangeList = _getResultAsIterable(resp.body);
         var exchangeList = List<common.Exchange>();
@@ -193,7 +190,7 @@ class RestApiClient {
   Future<common.Exchange> fetchExchange(String sym) {
     var ret = Future(() {
       var respFuture =
-          this.doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
+          this._doApiRequest("exchanges/${Uri.encodeComponent(sym)}");
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
           return null;
@@ -218,7 +215,7 @@ class RestApiClient {
         path += "/${Uri.encodeComponent(exchange)}";
       }
 
-      var respFuture = this.doApiRequest(path);
+      var respFuture = this._doApiRequest(path);
       return respFuture.then((resp) {
         var unparsedMarketList = _getResultAsIterable(resp.body);
         var marketList = List<common.Market>();
@@ -241,7 +238,7 @@ class RestApiClient {
       exchangeSym = Uri.encodeComponent(exchangeSym);
       pairSym = Uri.encodeComponent(pairSym);
 
-      var respFuture = this.doApiRequest("markets/${exchangeSym}/${pairSym}");
+      var respFuture = this._doApiRequest("markets/${exchangeSym}/${pairSym}");
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
           return null;
@@ -263,7 +260,7 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/orderbook";
-      var respFuture = this.doApiRequest(path);
+      var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
@@ -312,7 +309,7 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/ohlc";
-      var respFuture = this.doApiRequest(path, params: params);
+      var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
@@ -341,7 +338,7 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/summary";
-      var respFuture = this.doApiRequest(path);
+      var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
@@ -364,7 +361,7 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/price";
-      var respFuture = this.doApiRequest(path);
+      var respFuture = this._doApiRequest(path);
 
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
@@ -413,7 +410,7 @@ class RestApiClient {
       pairSym = Uri.encodeComponent(pairSym);
 
       var path = "markets/${exchangeSym}/${pairSym}/trades";
-      var respFuture = this.doApiRequest(path, params: params);
+      var respFuture = this._doApiRequest(path, params);
 
       return respFuture.then((resp) {
         if (resp.statusCode == _statusCodeNotFound) {
