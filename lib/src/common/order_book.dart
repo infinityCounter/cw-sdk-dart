@@ -23,8 +23,8 @@ class OrderBookSnapshot {
   /// [asks] and [bids] PublicOrders. Optionally a [seqNum] can be passed.
   OrderBookSnapshot(Iterable<PublicOrder> asks, Iterable<PublicOrder> bids,
       [this.seqNum = 0]) {
-    sortPublicOrders(asks);
-    sortPublicOrders(bids);
+    asks = sortPublicOrders(asks);
+    bids = sortPublicOrders(bids);
 
     this.asks.addAll(asks);
     this.bids.addAll(bids);
@@ -147,9 +147,7 @@ class OrderBook {
   /// Returns a sorted iterable set of all asks.
   Iterable<PublicOrder> get asks {
     var orders = this._asks.entries.map((entry) => entry.value).toList();
-    sortPublicOrders(orders);
-
-    return orders;
+    return sortPublicOrders(orders);
   }
 
   set asks(Iterable<PublicOrder> orders) {
@@ -168,9 +166,7 @@ class OrderBook {
   /// Returns a sorted iterable set of all bids.
   Iterable<PublicOrder> get bids {
     var orders = this._bids.entries.map((entry) => entry.value).toList();
-    sortPublicOrders(orders);
-
-    return orders;
+    return sortPublicOrders(orders);
   }
 
   set bids(Iterable<PublicOrder> orders) {

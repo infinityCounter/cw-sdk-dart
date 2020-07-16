@@ -53,8 +53,11 @@ class PublicOrder {
 }
 
 // sort public orders in either ascending (default) or descending price order.
-sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
-  orders.sort((a, b) {
+List<PublicOrder> sortPublicOrders(Iterable<PublicOrder> orders,
+    [bool asc = true]) {
+  final ordersList = orders.toList();
+
+  ordersList.sort((a, b) {
     if (a.price < b.price) {
       return (asc) ? -1 : 1;
     } else if (a.price > b.price) {
@@ -63,6 +66,8 @@ sortPublicOrders(List<PublicOrder> orders, [bool asc = true]) {
       return 0;
     }
   });
+
+  return ordersList;
 }
 
 // aggregates orders at certain price levels.
